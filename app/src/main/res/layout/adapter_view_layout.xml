@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:weightSum="99.9">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_weight="33.3"
+        android:orientation="vertical"
+        android:weightSum="99.9">
+
+        <TextView
+            android:id="@+id/nomePiattoTV"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_weight="40"
+            android:gravity="start|center_vertical"
+            android:paddingLeft="10dp"
+            android:text="nomePiattoTV"
+            android:textAlignment="textStart"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/ingredientiPiattoTV"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_weight="70"
+            android:gravity="start|center_vertical"
+            android:paddingLeft="10dp"
+            android:text="ingredientiPiattoTV"
+            android:textAlignment="textStart"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tipoPiattoTV"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_weight="66.6"
+        android:gravity="center_vertical|end"
+        android:paddingRight="10dp"
+        android:text="tipoPiattoTV"
+        android:textAlignment="textEnd" />
+
+</LinearLayout>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/Verde_BG"
+    android:orientation="vertical"
+    tools:context=".ListaPiattiActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/homeBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:background="@null"
+            android:scaleX="0.8"
+            android:scaleY="0.8"
+            android:src="@drawable/home_icon"
+            android:tint="@color/Verde_scuro" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/lista_piatti"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+
+        <ImageButton
+            android:id="@+id/filterBtn"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerHorizontal="false"
+            android:layout_centerVertical="true"
+            android:layout_gravity="end"
+            android:background="@null"
+            android:onClick="showFilterTapped"
+            android:scaleX="0.8"
+            android:scaleY="0.8"
+            android:src="@drawable/filter_plus"
+            android:tint="@color/Verde_scuro" />
+
+    </RelativeLayout>
+
+    <SearchView
+        android:id="@+id/listaPiattiSearchView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/Verde_BG"
+        android:iconifiedByDefault="false"
+        android:inputType="text"
+        android:queryHint="Cerca piatto" />
+
+    <LinearLayout
+        android:id="@+id/filtriPiattoLL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="5dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/tuttiFilter"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="66.6"
+                android:onClick="tuttiFilterTapped"
+                android:text="Tutti" />
+
+            <Button
+                android:id="@+id/primiFilter"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="66.6"
+                android:onClick="primiFilterTapped"
+                android:text="Primi" />
+
+            <Button
+                android:id="@+id/secondiFilter"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="66.6"
+                android:onClick="secondiFilterTapped"
+                android:text="Secondi" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/contorniFilter"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="66.6"
+                android:onClick="contorniFilterTapped"
+                android:text="Contorni" />
+
+            <Button
+                android:id="@+id/rectangleFilter"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="66.6"
+                android:onClick="piattiuniciFilterTapped"
+                android:text="Piatti unici" />
+
+            <Button
+                android:id="@+id/circleFilter"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="66.6"
+                android:onClick="personaliFilterTapped"
+                android:text="Personali" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/aggiuntapiattoactivityBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Aggiungi un piatto" />
+
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</LinearLayout>

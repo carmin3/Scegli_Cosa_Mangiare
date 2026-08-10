@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Scegli Cosa Mangiare</string>
+    <string name="lista_piatti">Lista Piatti</string>
+    <string-array name="cheportata">
+        <item>Che portata è?</item>
+        <item>Primo</item>
+        <item>Secondo</item>
+        <item>Contorno</item>
+        <item>Piatto Unico</item>
+    </string-array>
+    <string-array name="chenutrienti">
+        <item>Che nutrienti contiene?</item>
+        <item>Carne Rossa</item>
+        <item>Carne Bianca</item>
+        <item>Pesce</item>
+        <item>Altro</item>
+    </string-array>
+
+</resources>
