@@ -30,10 +30,12 @@ public class PiattoListAdapter extends ArrayAdapter<Piatto>
         TextView tv2 = (TextView) convertView.findViewById(R.id.tipoPiattoTV);
         TextView tv3 = (TextView) convertView.findViewById(R.id.ingredientiPiattoTV);
 
-        tv.setText(piatto.getNomePiatto());
-        tv2.setText(piatto.getPortata());
-        tv3.setText(piatto.getNutrienti());
-
+        // null-safe setting
+        if (piatto != null) {
+            if (piatto.getNomePiatto() != null) tv.setText(piatto.getNomePiatto());
+            if (piatto.getPortata() != null) tv2.setText(piatto.getPortata());
+            if (piatto.getNutrienti() != null) tv3.setText(piatto.getNutrienti());
+        }
 
         return convertView;
     }
