@@ -10,8 +10,8 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Toast;
 import java.util.ArrayList;
-
 
 
 public class ListaPiattiActivity extends AppCompatActivity {
@@ -44,36 +44,34 @@ public class ListaPiattiActivity extends AppCompatActivity {
         goToAggiuntaPiattoActivity();
         nascondiTastoAggiunta();
 
-        /*
-        DataBaseHelper dataBaseHelper = new DataBaseHelper(ListaPiattiActivity.this);
-        List<Piatto> everyone = dataBaseHelper.getAllData();
-        Toast.makeText(ListaPiattiActivity.this, everyone.toString(), Toast.LENGTH_SHORT).show();
-        */
-
     }
 
     private void backHomeActivity() {
         ImageButton homeBtn = (ImageButton)findViewById(R.id.homeBtn);
-        homeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                Intent backHome = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(backHome);
-            }
-        });
+        if (homeBtn != null) {
+            homeBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v)
+                {
+                    Intent backHome = new Intent(ListaPiattiActivity.this, MainActivity.class);
+                    startActivity(backHome);
+                }
+            });
+        }
     }
 
     private void goToAggiuntaPiattoActivity() {
         Button vaiadaggiuntapiattiactivity = (Button)findViewById(R.id.aggiuntapiattoactivityBtn);
-        vaiadaggiuntapiattiactivity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                Intent vaiAdAggiuntaPiattiActivity = new Intent(getApplicationContext(), AggiuntaPiattiActivity.class);
-                startActivity(vaiAdAggiuntaPiattiActivity);
-            }
-        });
+        if (vaiadaggiuntapiattiactivity != null) {
+            vaiadaggiuntapiattiactivity.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v)
+                {
+                    Intent vaiAdAggiuntaPiattiActivity = new Intent(ListaPiattiActivity.this, AggiuntaPiattiActivity.class);
+                    startActivity(vaiAdAggiuntaPiattiActivity);
+                }
+            });
+        }
     }
 
 
@@ -93,13 +91,16 @@ public class ListaPiattiActivity extends AppCompatActivity {
     private void setUpList() {
 
         listView = (ListView) findViewById(R.id.listView);
-        setAdapter(listaPiatti);
+        if (listView != null) {
+            setAdapter(listaPiatti);
+        }
     }
 
 
     // creiamo il metodo "setAdapter" al quale forniamo una "listaPiatti" e lui si occupa di applicargli la "forma" che abbiamo deciso nel nostro adapter
     public void setAdapter(ArrayList<Piatto> listaPiatti)
     {
+        if (listView == null) return;
         PiattoListAdapter adapter = new PiattoListAdapter(getApplicationContext(), 0, listaPiatti);
         listView.setAdapter(adapter);
     }
@@ -111,6 +112,7 @@ public class ListaPiattiActivity extends AppCompatActivity {
     private void initSearchWidgets()
     {
         searchView = (SearchView) findViewById(R.id.listaPiattiSearchView);
+        if (searchView == null) return;
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -121,12 +123,12 @@ public class ListaPiattiActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String s)
             {
-                currentSearchText = s;
+                currentSearchText = s != null ? s : "";
                 ArrayList<Piatto> piattiFiltrati = new ArrayList<Piatto>();
 
                 for(Piatto piatto: listaPiatti)
                 {
-                    if(piatto.getNomePiatto().toLowerCase().contains(s.toLowerCase()))
+                    if(piatto != null && piatto.getNomePiatto() != null && piatto.getNomePiatto().toLowerCase().contains(s.toLowerCase()))
                     {
                         if(selectedFilter.equals("all"))
                         {
@@ -168,15 +170,15 @@ public class ListaPiattiActivity extends AppCompatActivity {
         // qui comincia la ricerca dei piatti che hanno come "Portata" il piatto selezionato dai filtri
         for(Piatto piatto: listaPiatti)
         {
-            if(piatto.getPortata().toLowerCase().contains(status))
+            if(piatto != null && piatto.getPortata() != null && piatto.getPortata().toLowerCase().contains(status))
             {
-                if(currentSearchText == "")
+                if(currentSearchText == null || currentSearchText.isEmpty())
                 {
                     piattiFiltrati.add(piatto);
                 }
                 else
                 {
-                    if(piatto.getNomePiatto().toLowerCase().contains(currentSearchText.toLowerCase()))
+                    if(piatto.getNomePiatto() != null && piatto.getNomePiatto().toLowerCase().contains(currentSearchText.toLowerCase()))
                     {
                         piattiFiltrati.add(piatto);
                     }
@@ -189,8 +191,10 @@ public class ListaPiattiActivity extends AppCompatActivity {
     public void tuttiFilterTapped(View view)
     {
         selectedFilter = "all";
-        searchView.setQuery("", false);
-        searchView.clearFocus();
+        if (searchView != null) {
+            searchView.setQuery("", false);
+            searchView.clearFocus();
+        }
 
         setAdapter(listaPiatti);
 
@@ -230,15 +234,15 @@ public class ListaPiattiActivity extends AppCompatActivity {
 
         for(Piatto piatto: listaPiatti)
         {
-            if(piatto.getPersonale() == true)
+            if(Boolean.TRUE.equals(piatto.getPersonale()))
             {
-                if(currentSearchText == "")
+                if(currentSearchText == null || currentSearchText.isEmpty())
                 {
                     piattiPersonali.add(piatto);
                 }
                 else
                 {
-                    if(piatto.getNomePiatto().toLowerCase().contains(currentSearchText.toLowerCase()))
+                    if(piatto.getNomePiatto() != null && piatto.getNomePiatto().toLowerCase().contains(currentSearchText.toLowerCase()))
                     {
                         piattiPersonali.add(piatto);
                     }
@@ -246,9 +250,7 @@ public class ListaPiattiActivity extends AppCompatActivity {
             }
         }
         setAdapter(piattiPersonali);
-        /*
-        filterList("personali");
-        */
+        
         mostraTastoAggiunta();
     }
 
@@ -271,26 +273,26 @@ public class ListaPiattiActivity extends AppCompatActivity {
 
     private void hideFilter()
     {
-        filtriPiattoLL.setVisibility(View.GONE);
-        filterBtn.setImageResource(R.drawable.filter_plus);
+        if (filtriPiattoLL != null) filtriPiattoLL.setVisibility(View.GONE);
+        if (filterBtn != null) filterBtn.setImageResource(R.drawable.filter_plus);
     }
 
     private void showFilter()
     {
-        filtriPiattoLL.setVisibility(View.VISIBLE);
-        filterBtn.setImageResource(R.drawable.filter_minus);
+        if (filtriPiattoLL != null) filtriPiattoLL.setVisibility(View.VISIBLE);
+        if (filterBtn != null) filterBtn.setImageResource(R.drawable.filter_minus);
     }
 
     //tasto aggiunta piatto
 
     private void nascondiTastoAggiunta()
     {
-        aggiuntapiattoactivityBtn.setVisibility(View.GONE);
+        if (aggiuntapiattoactivityBtn != null) aggiuntapiattoactivityBtn.setVisibility(View.GONE);
     }
 
     private void mostraTastoAggiunta()
     {
-        aggiuntapiattoactivityBtn.setVisibility(View.VISIBLE);
+        if (aggiuntapiattoactivityBtn != null) aggiuntapiattoactivityBtn.setVisibility(View.VISIBLE);
     }
 
 }
