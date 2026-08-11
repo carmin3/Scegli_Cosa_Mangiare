@@ -9,7 +9,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String PIATTO_TABLE = "PIATTO_TABLE";
@@ -28,7 +27,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     //bisogna quindi inserirci semplicemente le informazioni per crearlo
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String createTableStatement = "CREATE TABLE " + PIATTO_TABLE + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_NOME_PIATTO + " TEXT, " + COLUMN_PORTATA_PIATTO + " TEXT, " + COLUMN_NUTRIENTI_PIATTO + " TEXT, " + COLUMN_PERSONALI + " BOOL)";
+        String createTableStatement = "CREATE TABLE " + PIATTO_TABLE + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + COLUMN_NOME_PIATTO + " TEXT, " + COLUMN_PORTATA_PIATTO + " TEXT, "
+                + COLUMN_NUTRIENTI_PIATTO + " TEXT, " + COLUMN_PERSONALI + " INTEGER DEFAULT 0)";
 
         db.execSQL(createTableStatement);
 
@@ -48,49 +49,13 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_NOME_PIATTO, piatto.getNomePiatto());
         cv.put(COLUMN_PORTATA_PIATTO, piatto.getPortata());
         cv.put(COLUMN_NUTRIENTI_PIATTO, piatto.getNutrienti());
-        cv.put(COLUMN_PERSONALI, piatto.getPersonale());
+        // store boolean as integer 1/0
+        cv.put(COLUMN_PERSONALI, piatto.getPersonale() != null && piatto.getPersonale() ? 1 : 0);
 
         long insert = db.insert(PIATTO_TABLE, null, cv);
-        if (insert ==-1) {
-            return false;
-        }
-        else{
-            return true;
-        }
-    }
-
-    /*public List <Piatto> getEveryone() {
-
-        List<Piatto> returnList = new ArrayList<>();
-
-        String queryString = "SELECT * FROM " + PIATTO_TABLE;
-
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        Cursor cursor = db.rawQuery(queryString, null);
-
-        if (cursor.moveToFirst()) {
-            // crea un loop su tutte le righe della tabella e vai a scrivere queste info in una returnList
-            do {
-                int piattoIDDB = cursor.getInt(0);
-                String nomePiattoDB = cursor.getString(1);
-                String portataPiattoDB = cursor.getString(2);
-                String nutrientiPiattoDB = cursor.getString(3);
-                boolean personaliDB = cursor.getInt(4) == 1 ? true: false;
-
-                Piatto nuovoPiatto = new Piatto(piattoIDDB, nomePiattoDB,portataPiattoDB, nutrientiPiattoDB,personaliDB);
-                returnList.add(nuovoPiatto);
-
-            } while (cursor.moveToNext());
-        }
-        else {
-
-        }
-
-        cursor.close();
         db.close();
-        return returnList;
-    }*/
+        return insert != -1;
+    }
 
     public ArrayList<Piatto> getAllData() {
         ArrayList<Piatto> listaPiatti = new ArrayList<>();
@@ -99,22 +64,24 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         String queryString = "SELECT * FROM " + PIATTO_TABLE;
         Cursor cursor = db.rawQuery(queryString, null);
 
-        if (cursor.moveToFirst()) {
-            // crea un loop su tutte le righe della tabella e vai a scrivere queste info in una returnList
-            do {
-                int piattoIDDB = cursor.getInt(0);
-                String nomePiattoDB = cursor.getString(1);
-                String portataPiattoDB = cursor.getString(2);
-                String nutrientiPiattoDB = cursor.getString(3);
-                boolean personaliDB = cursor.getInt(4) == 1 ? true: false;
+        try {
+            if (cursor.moveToFirst()) {
+                // crea un loop su tutte le righe della tabella e vai a scrivere queste info in una returnList
+                do {
+                    int piattoIDDB = cursor.getInt(0);
+                    String nomePiattoDB = cursor.getString(1);
+                    String portataPiattoDB = cursor.getString(2);
+                    String nutrientiPiattoDB = cursor.getString(3);
+                    boolean personaliDB = cursor.getInt(4) == 1;
 
-                Piatto nuovoPiatto = new Piatto(piattoIDDB, nomePiattoDB,portataPiattoDB, nutrientiPiattoDB,personaliDB);
-                listaPiatti.add(nuovoPiatto);
+                    Piatto nuovoPiatto = new Piatto(piattoIDDB, nomePiattoDB,portataPiattoDB, nutrientiPiattoDB,personaliDB);
+                    listaPiatti.add(nuovoPiatto);
 
-            } while (cursor.moveToNext());
-        }
-        else {
-
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            if (cursor != null && !cursor.isClosed()) cursor.close();
+            db.close();
         }
 
         return listaPiatti ;
