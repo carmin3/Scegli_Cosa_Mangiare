@@ -34,14 +34,16 @@ public class PiattoPropostoActivity extends AppCompatActivity {
 
     private void refreshActivity() {
         ImageButton refreshBtn = (ImageButton)findViewById(R.id.refreshBtn);
-        refreshBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                sceltaCasualeProteina();
-                sceltaCasualePiatto();
-            }
-        });
+        if (refreshBtn != null) {
+            refreshBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v)
+                {
+                    sceltaCasualeProteina();
+                    sceltaCasualePiatto();
+                }
+            });
+        }
     }
 
 
@@ -69,38 +71,47 @@ public class PiattoPropostoActivity extends AppCompatActivity {
         //filtrare lista piatti rispetto alla proteina scelta
 
         ArrayList<Piatto> piattiFiltratiPerProteina = new ArrayList<Piatto>();
-        proteinaScelta = proteinaScelta.toLowerCase();
+        if (proteinaScelta == null) proteinaScelta = "";
+        String proteinaLower = proteinaScelta.toLowerCase();
 
-        for(Piatto piatto: listaPiatti)
-        {
-            if(piatto.getNutrienti().toLowerCase().contains(proteinaScelta))
+        if (listaPiatti != null) {
+            for(Piatto piatto: listaPiatti)
             {
-                piattiFiltratiPerProteina.add(piatto);
+                if (piatto != null && piatto.getNutrienti() != null && piatto.getNutrienti().toLowerCase().contains(proteinaLower))
+                {
+                    piattiFiltratiPerProteina.add(piatto);
+                }
             }
-
         }
 
+        TextView nomeDelPiattoCasualeTV = (TextView) findViewById(R.id.nomeDelPiattoCasualeTV);
+
+        if (piattiFiltratiPerProteina.isEmpty()) {
+            if (nomeDelPiattoCasualeTV != null) nomeDelPiattoCasualeTV.setText("Nessun piatto trovato");
+            return;
+        }
 
         randomGenerator = new Random();
         int index = randomGenerator.nextInt(piattiFiltratiPerProteina.size());
         Piatto piattoScelto = piattiFiltratiPerProteina.get(index);
 
-
-        TextView nomeDelPiattoCasualeTV = (TextView) findViewById(R.id.nomeDelPiattoCasualeTV);
-        nomeDelPiattoCasualeTV.setText(piattoScelto.getNomePiatto().toString());
-
+        if (nomeDelPiattoCasualeTV != null && piattoScelto != null && piattoScelto.getNomePiatto() != null) {
+            nomeDelPiattoCasualeTV.setText(piattoScelto.getNomePiatto());
+        }
 
     }
 
     private void backHomeActivity() {
         ImageButton homeBtn = (ImageButton)findViewById(R.id.homeBtn);
-        homeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                Intent backHome = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(backHome);
-            }
-        });
+        if (homeBtn != null) {
+            homeBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v)
+                {
+                    Intent backHome = new Intent(PiattoPropostoActivity.this, MainActivity.class);
+                    startActivity(backHome);
+                }
+            });
+        }
     }
 }

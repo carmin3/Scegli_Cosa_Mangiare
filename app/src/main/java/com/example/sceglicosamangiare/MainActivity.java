@@ -18,32 +18,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
-
-
         Button ProponiPiattoBtn = (Button)findViewById(R.id.ProponiPiattoBtn);
-        ProponiPiattoBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent ProponiPiattoIntent = new Intent(getApplicationContext(), PiattoPropostoActivity.class);
-                startActivity(ProponiPiattoIntent);
-            }
-        });
+        if (ProponiPiattoBtn != null) {
+            ProponiPiattoBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent ProponiPiattoIntent = new Intent(MainActivity.this, PiattoPropostoActivity.class);
+                    startActivity(ProponiPiattoIntent);
+                }
+            });
+        }
 
         ImageButton ListaBtn = (ImageButton)findViewById(R.id.ListaBtn);
-        ListaBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent ListaPiattiIntent = new Intent(getApplicationContext(), ListaPiattiActivity.class);
-                startActivity(ListaPiattiIntent);
-
-
-
-            }
-        });
+        if (ListaBtn != null) {
+            ListaBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent ListaPiattiIntent = new Intent(MainActivity.this, ListaPiattiActivity.class);
+                    startActivity(ListaPiattiIntent);
+                }
+            });
+        }
 
     }
 }
