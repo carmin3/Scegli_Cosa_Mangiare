@@ -16,15 +16,37 @@ public class AggiuntaPiattiActivity extends AppCompatActivity {
     public String nomePiattoNew;
     public String portataNew;
     public String nutrientiNew;
+    private int editingId = -1;
+    private DataBaseHelper dataBaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_aggiunta_piatti);
 
+        dataBaseHelper = new DataBaseHelper(AggiuntaPiattiActivity.this);
+
         BackHomeActivity();
 
-        Button aggiungiPiattoBtn = (Button)findViewById(R.id.aggiungiPiattoBtn);
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("piatto_id")) {
+            editingId = intent.getIntExtra("piatto_id", -1);
+        }
+
+        final Button aggiungiPiattoBtn = (Button)findViewById(R.id.aggiungiPiattoBtn);
+        if (editingId >= 0) {
+            // edit mode: pre-populate
+            Piatto p = dataBaseHelper.getById(editingId);
+            if (p != null) {
+                Spinner spinnerPortata = findViewById(R.id.portataSpinner);
+                Spinner spinnerNutrienti = findViewById(R.id.nutrientiSpinner);
+                EditText TVnomeinput = (EditText) findViewById(R.id.nomeDelPiattoCasualeTV);
+                if (TVnomeinput != null) TVnomeinput.setText(p.getNomePiatto());
+                // for spinners we assume the values exist; advanced: set selection by value
+                aggiungiPiattoBtn.setText("Salva modifica");
+            }
+        }
+
         if (aggiungiPiattoBtn != null) {
             aggiungiPiattoBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -66,17 +88,39 @@ public class AggiuntaPiattiActivity extends AppCompatActivity {
                     }
                     nutrientiNew = spinnerNutrientiValue;
 
-                    // iniziamo con il database:
-                    Piatto piatto = new Piatto(-1, nomePiattoNew, portataNew, nutrientiNew, Boolean.TRUE);
+                    if (editingId >= 0) {
+                        // edit flow
+                        // check duplicates excluding current id
+                        if (dataBaseHelper.existsByNameAndPortata(nomePiattoNew, portataNew, editingId)) {
+                            Toast.makeText(AggiuntaPiattiActivity.this, "Esiste già un piatto con questo nome e portata", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        Piatto p = new Piatto(editingId, nomePiattoNew, portataNew, nutrientiNew, Boolean.TRUE);
+                        boolean ok = dataBaseHelper.updateOne(p);
+                        if (ok) {
+                            Toast.makeText(AggiuntaPiattiActivity.this, "Piatto aggiornato", Toast.LENGTH_SHORT).show();
+                            finish();
+                        } else {
+                            Toast.makeText(AggiuntaPiattiActivity.this, "Aggiornamento fallito", Toast.LENGTH_SHORT).show();
+                        }
 
-                    DataBaseHelper dataBaseHelper = new DataBaseHelper(AggiuntaPiattiActivity.this);
-                    boolean success = dataBaseHelper.addOne(piatto);
+                    } else {
+                        // create flow
+                        if (dataBaseHelper.existsByNameAndPortata(nomePiattoNew, portataNew, -1)) {
+                            Toast.makeText(AggiuntaPiattiActivity.this, "Esiste già un piatto con questo nome e portata", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        Piatto piatto = new Piatto(-1, nomePiattoNew, portataNew, nutrientiNew, Boolean.TRUE);
+                        boolean success = dataBaseHelper.addOne(piatto);
 
-                    if (success){
-                        Toast.makeText(AggiuntaPiattiActivity.this, "Piatto inserito con successo!", Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                        Toast.makeText(AggiuntaPiattiActivity.this, "Ops! Qualcosa è andato storto...", Toast.LENGTH_SHORT).show();
+                        if (success){
+                            Toast.makeText(AggiuntaPiattiActivity.this, "Piatto inserito con successo!", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                        else {
+                            Toast.makeText(AggiuntaPiattiActivity.this, "Ops! Qualcosa è andato storto...", Toast.LENGTH_SHORT).show();
+
+                        }
                     }
                 }
             });

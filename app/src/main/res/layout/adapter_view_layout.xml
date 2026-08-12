@@ -2,24 +2,32 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:weightSum="99.9">
+    android:padding="8dp">
+
+    <ImageView
+        android:id="@+id/favoriteStar"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="favorite"
+        android:src="@android:drawable/btn_star_big_off"
+        android:visibility="gone"
+        android:paddingEnd="8dp" />
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_weight="33.3"
-        android:orientation="vertical"
-        android:weightSum="99.9">
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/nomePiattoTV"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_weight="40"
+            android:layout_height="wrap_content"
             android:gravity="start|center_vertical"
-            android:paddingLeft="10dp"
+            android:paddingLeft="2dp"
             android:text="nomePiattoTV"
             android:textAlignment="textStart"
             android:textSize="20sp"
@@ -28,10 +36,9 @@
         <TextView
             android:id="@+id/ingredientiPiattoTV"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_weight="70"
+            android:layout_height="wrap_content"
             android:gravity="start|center_vertical"
-            android:paddingLeft="10dp"
+            android:paddingLeft="2dp"
             android:text="ingredientiPiattoTV"
             android:textAlignment="textStart"
             android:textSize="12sp" />
@@ -40,9 +47,8 @@
 
     <TextView
         android:id="@+id/tipoPiattoTV"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_weight="66.6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:gravity="center_vertical|end"
         android:paddingRight="10dp"
         android:text="tipoPiattoTV"

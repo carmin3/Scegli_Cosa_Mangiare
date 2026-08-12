@@ -7,13 +7,26 @@ public class Piatto {
     private String portata;
     private String nutrienti;
     private Boolean personale;
+    private Boolean favorito = false;
 
+    // existing constructor (kept for compatibility)
     public Piatto(int id, String nomePiatto, String portata, String nutrienti, Boolean personale) {
         this.id = id;
         this.nomePiatto = nomePiatto;
         this.portata = portata;
         this.nutrienti = nutrienti;
         this.personale = personale;
+        this.favorito = false;
+    }
+
+    // new constructor with favorito
+    public Piatto(int id, String nomePiatto, String portata, String nutrienti, Boolean personale, Boolean favorito) {
+        this.id = id;
+        this.nomePiatto = nomePiatto;
+        this.portata = portata;
+        this.nutrienti = nutrienti;
+        this.personale = personale;
+        this.favorito = favorito != null ? favorito : false;
     }
 
     @Override
@@ -24,6 +37,7 @@ public class Piatto {
                 ", portata='" + portata + '\'' +
                 ", nutrienti='" + nutrienti + '\'' +
                 ", personale=" + personale +
+                ", favorito=" + favorito +
                 '}';
     }
 
@@ -65,5 +79,13 @@ public class Piatto {
 
     public void setPersonale(Boolean personale) {
         this.personale = personale;
+    }
+
+    public Boolean getFavorito() {
+        return favorito;
+    }
+
+    public void setFavorito(Boolean favorito) {
+        this.favorito = favorito != null ? favorito : false;
     }
 }

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/detailNome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:text="Nome" />
+
+        <TextView
+            android:id="@+id/detailPortata"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Portata" />
+
+        <TextView
+            android:id="@+id/detailNutrienti"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nutrienti" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+            <Button
+                android:id="@+id/btnModifica"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Modifica" />
+
+            <Button
+                android:id="@+id/btnElimina"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Elimina" />
+
+            <Button
+                android:id="@+id/btnPreferito"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Aggiungi ai preferiti" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>
