@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="8dp">
+    android:padding="8dp"
+    android:descendantFocusability="blocksDescendants">
 
     <ImageView
         android:id="@+id/favoriteStar"
@@ -14,7 +15,10 @@
         android:contentDescription="favorite"
         android:src="@android:drawable/btn_star_big_off"
         android:visibility="gone"
-        android:paddingEnd="8dp" />
+        android:paddingEnd="8dp"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:clickable="false" />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -31,7 +35,10 @@
             android:text="nomePiattoTV"
             android:textAlignment="textStart"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:clickable="false" />
 
         <TextView
             android:id="@+id/ingredientiPiattoTV"
@@ -41,7 +48,10 @@
             android:paddingLeft="2dp"
             android:text="ingredientiPiattoTV"
             android:textAlignment="textStart"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:clickable="false" />
 
     </LinearLayout>
 
@@ -52,6 +62,9 @@
         android:gravity="center_vertical|end"
         android:paddingRight="10dp"
         android:text="tipoPiattoTV"
-        android:textAlignment="textEnd" />
+        android:textAlignment="textEnd"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:clickable="false" />
 
 </LinearLayout>

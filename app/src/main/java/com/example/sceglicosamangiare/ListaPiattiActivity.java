@@ -5,11 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
 
@@ -26,7 +28,7 @@ public class ListaPiattiActivity extends AppCompatActivity {
     private Button aggiuntapiattoactivityBtn;
     private DataBaseHelper dataBaseHelper;
     private ArrayList<Piatto> listaPiatti;
-
+    private TextView emptyStateTV;
 
 
 
@@ -35,6 +37,8 @@ public class ListaPiattiActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_piatti);
 
+        emptyStateTV = findViewById(R.id.emptyStateTextView);
+
         importaDatabase();
         setUpList();
         initSearchWidgets();
@@ -42,8 +46,44 @@ public class ListaPiattiActivity extends AppCompatActivity {
         hideFilter();
         backHomeActivity();
         goToAggiuntaPiattoActivity();
-        nascondiTastoAggiunta();
+        // show the add button by default
+        mostraTastoAggiunta();
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // refresh list when returning from other activities
+        importaDatabase();
+        setUpList();
+    }
+
+    private void setUpList() {
+        listView = (ListView) findViewById(R.id.listView);
+        if (listaPiatti == null || listaPiatti.isEmpty()) {
+            if (listView != null) listView.setVisibility(View.GONE);
+            if (emptyStateTV != null) emptyStateTV.setVisibility(View.VISIBLE);
+            return;
+        }
+        if (emptyStateTV != null) emptyStateTV.setVisibility(View.GONE);
+        if (listView != null) {
+            PiattoListAdapter adapter = new PiattoListAdapter(getApplicationContext(), 0, listaPiatti);
+            listView.setAdapter(adapter);
+
+            // ensure clicks on rows open detail
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Piatto selected = (Piatto) parent.getItemAtPosition(position);
+                    if (selected != null) {
+                        Intent detail = new Intent(ListaPiattiActivity.this, PiattoDetailActivity.class);
+                        detail.putExtra(PiattoDetailActivity.EXTRA_PIATTO_ID, selected.getId());
+                        startActivity(detail);
+                    }
+                }
+            });
+        }
     }
 
     private void backHomeActivity() {
@@ -86,17 +126,6 @@ public class ListaPiattiActivity extends AppCompatActivity {
 //        new DatabasePiatti().setupData();
     }
 
-    //con la prima istruzione andiamo a collegare l'oggetto "listview" che si trova nel frontend con la variabile listView presente in questa classe
-    // poi diciamo di inviare tale listview al metodo "setAdapter"
-    private void setUpList() {
-
-        listView = (ListView) findViewById(R.id.listView);
-        if (listView != null) {
-            setAdapter(listaPiatti);
-        }
-    }
-
-
     // creiamo il metodo "setAdapter" al quale forniamo una "listaPiatti" e lui si occupa di applicargli la "forma" che abbiamo deciso nel nostro adapter
     public void setAdapter(ArrayList<Piatto> listaPiatti)
     {
@@ -104,7 +133,6 @@ public class ListaPiattiActivity extends AppCompatActivity {
         PiattoListAdapter adapter = new PiattoListAdapter(getApplicationContext(), 0, listaPiatti);
         listView.setAdapter(adapter);
     }
-
 
 
     // qui comincia la parte di searching e filtering
