@@ -23,7 +23,7 @@
             android:scaleX="0.8"
             android:scaleY="0.8"
             android:src="@drawable/home_icon"
-            android:tint="@color/Verde_scuro" />
+            app:tint="@color/Verde_scuro" />
 
 
         <TextView
@@ -42,7 +42,7 @@
             style="@style/Widget.MaterialComponents.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            app:layout_alignParentRight="true"
             android:layout_centerHorizontal="false"
             android:layout_centerVertical="true"
             android:layout_gravity="end"
@@ -51,7 +51,7 @@
             android:scaleX="0.8"
             android:scaleY="0.8"
             android:src="@drawable/filter_plus"
-            android:tint="@color/Verde_scuro" />
+            app:tint="@color/Verde_scuro" />
 
     </RelativeLayout>
 
@@ -148,7 +148,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Aggiungi un piatto" />
-
+    <TextView
+        android:id="@+id/emptyStateTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Nessun piatto — aggiungi uno"
+        android:visibility="gone"
+        android:textColor="@color/black"
+        android:padding="16dp" />
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"

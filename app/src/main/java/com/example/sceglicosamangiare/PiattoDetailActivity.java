@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
@@ -28,6 +29,8 @@ public class PiattoDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_piatto_detail);
+
+        BackHomeActivity();
 
         dataBaseHelper = new DataBaseHelper(PiattoDetailActivity.this);
 
@@ -157,4 +160,18 @@ public class PiattoDetailActivity extends AppCompatActivity {
         spinner.setAdapter(aa);
         spinner.setSelection(0);
     }
+    private void BackHomeActivity() {
+        ImageButton homeBtn = (ImageButton)findViewById(R.id.homeBtn);
+        if (homeBtn != null) {
+            homeBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v)
+                {
+                    Intent backHome = new Intent(PiattoDetailActivity.this, MainActivity.class);
+                    startActivity(backHome);
+                }
+            });
+        }
+    }
+
 }
