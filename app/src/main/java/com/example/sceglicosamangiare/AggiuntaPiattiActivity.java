@@ -29,6 +29,7 @@ public class AggiuntaPiattiActivity extends AppCompatActivity {
         dataBaseHelper = new DataBaseHelper(AggiuntaPiattiActivity.this);
 
         BackHomeActivity();
+        ListaPiattiActivity();
 
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra("piatto_id")) {
@@ -150,6 +151,19 @@ public class AggiuntaPiattiActivity extends AppCompatActivity {
                 public void onClick(View v)
                 {
                     Intent backHome = new Intent(AggiuntaPiattiActivity.this, MainActivity.class);
+                    startActivity(backHome);
+                }
+            });
+        }
+    }
+    private void ListaPiattiActivity() {
+        ImageButton homeBtn = (ImageButton)findViewById(R.id.ListaBtn);
+        if (homeBtn != null) {
+            homeBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v)
+                {
+                    Intent backHome = new Intent(AggiuntaPiattiActivity.this, ListaPiattiActivity.class);
                     startActivity(backHome);
                 }
             });
