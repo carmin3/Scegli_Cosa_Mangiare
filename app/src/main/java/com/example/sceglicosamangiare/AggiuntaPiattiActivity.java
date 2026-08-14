@@ -99,6 +99,7 @@ public class AggiuntaPiattiActivity extends AppCompatActivity {
                         boolean ok = dataBaseHelper.updateOne(p);
                         if (ok) {
                             Toast.makeText(AggiuntaPiattiActivity.this, "Piatto aggiornato", Toast.LENGTH_SHORT).show();
+                            setResult(RESULT_OK);
                             finish();
                         } else {
                             Toast.makeText(AggiuntaPiattiActivity.this, "Aggiornamento fallito", Toast.LENGTH_SHORT).show();
