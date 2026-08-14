@@ -10,6 +10,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
+import android.widget.ListView;
+import android.widget.TextView;
 
 public class AggiuntaPiattiActivity extends AppCompatActivity {
 
@@ -31,6 +33,17 @@ public class AggiuntaPiattiActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra("piatto_id")) {
             editingId = intent.getIntExtra("piatto_id", -1);
+        }
+
+        // Title and ListView visibility depending on mode
+        TextView titleText = (TextView) findViewById(R.id.titleText);
+        ListView lvDb = (ListView) findViewById(R.id.LV_db);
+        if (titleText != null) {
+            if (editingId >= 0) titleText.setText("Modifica un piatto");
+            else titleText.setText("Aggiungi un piatto");
+        }
+        if (lvDb != null) {
+            lvDb.setVisibility(View.VISIBLE);
         }
 
         final Button aggiungiPiattoBtn = (Button)findViewById(R.id.aggiungiPiattoBtn);
