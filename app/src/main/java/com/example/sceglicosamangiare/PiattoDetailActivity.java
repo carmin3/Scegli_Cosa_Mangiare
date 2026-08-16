@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +28,10 @@ public class PiattoDetailActivity extends AppCompatActivity {
 
         dataBaseHelper = new DataBaseHelper(PiattoDetailActivity.this);
 
+        // Chiamata ai metodi di navigazione della TopBar
+        BackHomeActivity();
+        ListaPiattiActivity();
+
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra(EXTRA_PIATTO_ID)) {
             piattoId = intent.getIntExtra(EXTRA_PIATTO_ID, -1);
@@ -41,40 +46,43 @@ public class PiattoDetailActivity extends AppCompatActivity {
 
         loadPiatto();
 
-        btnModifica.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (current != null) {
-                    Intent edit = new Intent(PiattoDetailActivity.this, AggiuntaPiattiActivity.class);
-                    edit.putExtra("piatto_id", current.getId());
-                    startActivityForResult(edit, REQUEST_EDIT_PIATTO);
-                    // do not finish here; wait for result
+        if (btnModifica != null) {
+            btnModifica.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (current != null) {
+                        Intent edit = new Intent(PiattoDetailActivity.this, AggiuntaPiattiActivity.class);
+                        edit.putExtra("piatto_id", current.getId());
+                        startActivityForResult(edit, REQUEST_EDIT_PIATTO);
+                    }
                 }
-            }
-        });
+            });
+        }
 
-        btnElimina.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (current == null) return;
-                new AlertDialog.Builder(PiattoDetailActivity.this)
-                        .setTitle("Elimina piatto")
-                        .setMessage("Sei sicuro di voler eliminare questo piatto?")
-                        .setPositiveButton("Elimina", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                boolean deleted = dataBaseHelper.deleteOne(current.getId());
-                                if (deleted) {
-                                    Toast.makeText(PiattoDetailActivity.this, "Piatto eliminato", Toast.LENGTH_SHORT).show();
-                                    finish();
-                                } else {
-                                    Toast.makeText(PiattoDetailActivity.this, "Impossibile eliminare il piatto", Toast.LENGTH_SHORT).show();
+        if (btnElimina != null) {
+            btnElimina.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (current == null) return;
+                    new AlertDialog.Builder(PiattoDetailActivity.this)
+                            .setTitle("Elimina piatto")
+                            .setMessage("Sei sicuro di voler eliminare questo piatto?")
+                            .setPositiveButton("Elimina", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    boolean deleted = dataBaseHelper.deleteOne(current.getId());
+                                    if (deleted) {
+                                        Toast.makeText(PiattoDetailActivity.this, "Piatto eliminato", Toast.LENGTH_SHORT).show();
+                                        finish();
+                                    } else {
+                                        Toast.makeText(PiattoDetailActivity.this, "Impossibile eliminare il piatto", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
-                            }
-                        })
-                        .setNegativeButton("Annulla", null)
-                        .show();
-            }
-        });
+                            })
+                            .setNegativeButton("Annulla", null)
+                            .show();
+                }
+            });
+        }
 
         if (btnTogglePreferito != null) {
             btnTogglePreferito.setOnClickListener(new View.OnClickListener() {
@@ -100,7 +108,32 @@ public class PiattoDetailActivity extends AppCompatActivity {
                 }
             });
         }
+    }
 
+    private void BackHomeActivity() {
+        ImageButton homeBtn = (ImageButton) findViewById(R.id.homeBtn);
+        if (homeBtn != null) {
+            homeBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent backHome = new Intent(PiattoDetailActivity.this, MainActivity.class);
+                    startActivity(backHome);
+                }
+            });
+        }
+    }
+
+    private void ListaPiattiActivity() {
+        ImageButton listaBtn = (ImageButton) findViewById(R.id.ListaBtn);
+        if (listaBtn != null) {
+            listaBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent goToLista = new Intent(PiattoDetailActivity.this, ListaPiattiActivity.class);
+                    startActivity(goToLista);
+                }
+            });
+        }
     }
 
     @Override

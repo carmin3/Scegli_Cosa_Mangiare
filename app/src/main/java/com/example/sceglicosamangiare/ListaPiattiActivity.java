@@ -12,9 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 import java.util.ArrayList;
-
 
 public class ListaPiattiActivity extends AppCompatActivity {
 
@@ -25,53 +23,115 @@ public class ListaPiattiActivity extends AppCompatActivity {
     private ImageButton filterBtn;
     private LinearLayout filtriPiattoLL;
     private boolean filterHidden = true;
-    private Button aggiuntapiattoactivityBtn;
     private DataBaseHelper dataBaseHelper;
     private ArrayList<Piatto> listaPiatti;
     private TextView emptyStateTV;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_piatti);
 
+        listView = findViewById(R.id.listView);
         emptyStateTV = findViewById(R.id.emptyStateTextView);
 
         importaDatabase();
-        setUpList();
-        initSearchWidgets();
         initWidgets();
-        hideFilter();
+        initSearchWidgets();
+        hideFilter(); // Nasconde i filtri E il pulsante di aggiunta all'inizio
         backHomeActivity();
         goToAggiuntaPiattoActivity();
-        // show the add button by default
-        mostraTastoAggiunta();
 
+        applyFilters();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // refresh list when returning from other activities
         importaDatabase();
-        setUpList();
+        applyFilters();
     }
 
-    private void setUpList() {
-        listView = (ListView) findViewById(R.id.listView);
-        if (listaPiatti == null || listaPiatti.isEmpty()) {
-            if (listView != null) listView.setVisibility(View.GONE);
-            if (emptyStateTV != null) emptyStateTV.setVisibility(View.VISIBLE);
-            return;
+    public void importaDatabase() {
+        dataBaseHelper = new DataBaseHelper(ListaPiattiActivity.this);
+        listaPiatti = dataBaseHelper.getAllData();
+        if (listaPiatti == null) {
+            listaPiatti = new ArrayList<>();
         }
-        if (emptyStateTV != null) emptyStateTV.setVisibility(View.GONE);
-        if (listView != null) {
-            PiattoListAdapter adapter = new PiattoListAdapter(getApplicationContext(), 0, listaPiatti);
+    }
+
+    private void initWidgets() {
+        filterBtn = findViewById(R.id.filterBtn);
+        filtriPiattoLL = findViewById(R.id.filtriPiattoLL);
+
+        if (filterBtn != null) {
+            filterBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showFilterTapped(v);
+                }
+            });
+        }
+    }
+
+    private void initSearchWidgets() {
+        searchView = findViewById(R.id.listaPiattiSearchView);
+        if (searchView == null) return;
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                currentSearchText = s != null ? s : "";
+                applyFilters();
+                return false;
+            }
+        });
+    }
+
+    private void applyFilters() {
+        ArrayList<Piatto> piattiFiltrati = new ArrayList<>();
+
+        for (Piatto piatto : listaPiatti) {
+            if (piatto == null) continue;
+
+            boolean matchesSearch = currentSearchText.isEmpty() ||
+                    (piatto.getNomePiatto() != null && piatto.getNomePiatto().toLowerCase().contains(currentSearchText.toLowerCase()));
+
+            boolean matchesFilter = false;
+            if (selectedFilter.equals("all")) {
+                matchesFilter = true;
+            } else if (selectedFilter.equals("personali")) {
+                matchesFilter = Boolean.TRUE.equals(piatto.getPersonale());
+            } else {
+                matchesFilter = piatto.getPortata() != null && piatto.getPortata().toLowerCase().contains(selectedFilter);
+            }
+
+            if (matchesSearch && matchesFilter) {
+                piattiFiltrati.add(piatto);
+            }
+        }
+
+        setAdapter(piattiFiltrati);
+    }
+
+    public void setAdapter(ArrayList<Piatto> lista) {
+        if (listView == null) return;
+
+        if (lista == null || lista.isEmpty()) {
+            listView.setVisibility(View.GONE);
+            if (emptyStateTV != null) emptyStateTV.setVisibility(View.VISIBLE);
+        } else {
+            listView.setVisibility(View.VISIBLE);
+            if (emptyStateTV != null) emptyStateTV.setVisibility(View.GONE);
+
+            PiattoListAdapter adapter = new PiattoListAdapter(this, 0, lista);
             listView.setAdapter(adapter);
 
-            // ensure clicks on rows open detail
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -87,12 +147,11 @@ public class ListaPiattiActivity extends AppCompatActivity {
     }
 
     private void backHomeActivity() {
-        ImageButton homeBtn = (ImageButton)findViewById(R.id.homeBtn);
+        ImageButton homeBtn = findViewById(R.id.homeBtn);
         if (homeBtn != null) {
             homeBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v)
-                {
+                public void onClick(View v) {
                     Intent backHome = new Intent(ListaPiattiActivity.this, MainActivity.class);
                     startActivity(backHome);
                 }
@@ -101,12 +160,11 @@ public class ListaPiattiActivity extends AppCompatActivity {
     }
 
     private void goToAggiuntaPiattoActivity() {
-        Button vaiadaggiuntapiattiactivity = (Button)findViewById(R.id.aggiuntapiattoactivityBtn);
+        Button vaiadaggiuntapiattiactivity = findViewById(R.id.aggiuntapiattoactivityBtn);
         if (vaiadaggiuntapiattiactivity != null) {
             vaiadaggiuntapiattiactivity.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v)
-                {
+                public void onClick(View v) {
                     Intent vaiAdAggiuntaPiattiActivity = new Intent(ListaPiattiActivity.this, AggiuntaPiattiActivity.class);
                     startActivity(vaiAdAggiuntaPiattiActivity);
                 }
@@ -114,213 +172,57 @@ public class ListaPiattiActivity extends AppCompatActivity {
         }
     }
 
-
-    //importiamo il database - DA MODIFICARE
-    public void importaDatabase() {
-
-        listaPiatti = new ArrayList<Piatto>();
-        dataBaseHelper = new DataBaseHelper(ListaPiattiActivity.this);
-        listaPiatti = dataBaseHelper.getAllData();
-
-
-//        new DatabasePiatti().setupData();
-    }
-
-    // creiamo il metodo "setAdapter" al quale forniamo una "listaPiatti" e lui si occupa di applicargli la "forma" che abbiamo deciso nel nostro adapter
-    public void setAdapter(ArrayList<Piatto> listaPiatti)
-    {
-        if (listView == null) return;
-        PiattoListAdapter adapter = new PiattoListAdapter(getApplicationContext(), 0, listaPiatti);
-        listView.setAdapter(adapter);
-    }
-
-
-    // qui comincia la parte di searching e filtering
-
-    private void initSearchWidgets()
-    {
-        searchView = (SearchView) findViewById(R.id.listaPiattiSearchView);
-        if (searchView == null) return;
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s)
-            {
-                currentSearchText = s != null ? s : "";
-                ArrayList<Piatto> piattiFiltrati = new ArrayList<Piatto>();
-
-                for(Piatto piatto: listaPiatti)
-                {
-                    if(piatto != null && piatto.getNomePiatto() != null && piatto.getNomePiatto().toLowerCase().contains(s.toLowerCase()))
-                    {
-                        if(selectedFilter.equals("all"))
-                        {
-                            piattiFiltrati.add(piatto);
-                        }
-                        else
-                        {
-                            if(piatto.getNomePiatto().toLowerCase().contains(s.toLowerCase())) //selectedFilter
-                            {
-                                piattiFiltrati.add(piatto);
-                            }
-                        }
-                    }
-                }
-                setAdapter(piattiFiltrati);
-
-                return false;
-            }
-        });
-    }
-
-    //vado ad accoppiare i tasti presenti nel layout con le variabili presenti in questa classe
-    private void initWidgets() {
-        filterBtn = (ImageButton) findViewById(R.id.filterBtn);
-        filtriPiattoLL = (LinearLayout) findViewById(R.id.filtriPiattoLL);
-        aggiuntapiattoactivityBtn = (Button) findViewById(R.id.aggiuntapiattoactivityBtn);
-    }
-
-
-
-    // L'obiettivo di queto metodo è creare una lista filtrata
-    // gli devo fornire il valore del filtro (che viene inviato nel momento in cui si clicca sui bottoni dei filtri)
-    private void filterList(String status)
-    {
-        selectedFilter = status;
-
-        ArrayList<Piatto> piattiFiltrati = new ArrayList<Piatto>();
-
-        // qui comincia la ricerca dei piatti che hanno come "Portata" il piatto selezionato dai filtri
-        for(Piatto piatto: listaPiatti)
-        {
-            if(piatto != null && piatto.getPortata() != null && piatto.getPortata().toLowerCase().contains(status))
-            {
-                if(currentSearchText == null || currentSearchText.isEmpty())
-                {
-                    piattiFiltrati.add(piatto);
-                }
-                else
-                {
-                    if(piatto.getNomePiatto() != null && piatto.getNomePiatto().toLowerCase().contains(currentSearchText.toLowerCase()))
-                    {
-                        piattiFiltrati.add(piatto);
-                    }
-                }
-            }
-        }
-        setAdapter(piattiFiltrati);
-    }
-
-    public void tuttiFilterTapped(View view)
-    {
+    public void tuttiFilterTapped(View view) {
         selectedFilter = "all";
         if (searchView != null) {
             searchView.setQuery("", false);
             searchView.clearFocus();
         }
-
-        setAdapter(listaPiatti);
-
-        nascondiTastoAggiunta();
+        applyFilters();
     }
 
-    public void primiFilterTapped(View view)
-    {
-        filterList("primo");
-        nascondiTastoAggiunta();
-
+    public void primiFilterTapped(View view) {
+        selectedFilter = "primo";
+        applyFilters();
     }
 
-    public void secondiFilterTapped(View view)
-    {
-        filterList("secondo");
-        nascondiTastoAggiunta();
-
+    public void secondiFilterTapped(View view) {
+        selectedFilter = "secondo";
+        applyFilters();
     }
 
-    public void contorniFilterTapped(View view)
-    {
-        filterList("contorno");
-        nascondiTastoAggiunta();
-
+    public void contorniFilterTapped(View view) {
+        selectedFilter = "contorno";
+        applyFilters();
     }
 
-    public void piattiuniciFilterTapped(View view)
-    {
-        filterList("piatto unico");
-        nascondiTastoAggiunta();
+    public void piattiuniciFilterTapped(View view) {
+        selectedFilter = "piatto unico";
+        applyFilters();
     }
 
-    public void personaliFilterTapped(View view)
-    {
-        ArrayList<Piatto> piattiPersonali = new ArrayList<Piatto>();
-
-        for(Piatto piatto: listaPiatti)
-        {
-            if(Boolean.TRUE.equals(piatto.getPersonale()))
-            {
-                if(currentSearchText == null || currentSearchText.isEmpty())
-                {
-                    piattiPersonali.add(piatto);
-                }
-                else
-                {
-                    if(piatto.getNomePiatto() != null && piatto.getNomePiatto().toLowerCase().contains(currentSearchText.toLowerCase()))
-                    {
-                        piattiPersonali.add(piatto);
-                    }
-                }
-            }
-        }
-        setAdapter(piattiPersonali);
-        
-        mostraTastoAggiunta();
+    public void personaliFilterTapped(View view) {
+        selectedFilter = "personali";
+        applyFilters();
     }
 
-
-
-    // in questa sezione ci occupiamo di nascondere o visualizzare i bottoni
-    public void showFilterTapped(View view)
-    {
-        if(filterHidden == true)
-        {
+    public void showFilterTapped(View view) {
+        if (filterHidden) {
             filterHidden = false;
             showFilter();
-        }
-        else
-        {
+        } else {
             filterHidden = true;
             hideFilter();
         }
     }
 
-    private void hideFilter()
-    {
+    private void hideFilter() {
         if (filtriPiattoLL != null) filtriPiattoLL.setVisibility(View.GONE);
         if (filterBtn != null) filterBtn.setImageResource(R.drawable.filter_plus);
     }
 
-    private void showFilter()
-    {
+    private void showFilter() {
         if (filtriPiattoLL != null) filtriPiattoLL.setVisibility(View.VISIBLE);
         if (filterBtn != null) filterBtn.setImageResource(R.drawable.filter_minus);
     }
-
-    //tasto aggiunta piatto
-
-    private void nascondiTastoAggiunta()
-    {
-        if (aggiuntapiattoactivityBtn != null) aggiuntapiattoactivityBtn.setVisibility(View.GONE);
-    }
-
-    private void mostraTastoAggiunta()
-    {
-        if (aggiuntapiattoactivityBtn != null) aggiuntapiattoactivityBtn.setVisibility(View.VISIBLE);
-    }
-
 }
