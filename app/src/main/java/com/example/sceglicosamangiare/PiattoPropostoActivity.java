@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 public class PiattoPropostoActivity extends AppCompatActivity {
 
@@ -86,7 +87,19 @@ public class PiattoPropostoActivity extends AppCompatActivity {
         TextView nomeDelPiattoCasualeTV = (TextView) findViewById(R.id.nomeDelPiattoCasualeTV);
 
         if (piattiFiltratiPerProteina.isEmpty()) {
-            if (nomeDelPiattoCasualeTV != null) nomeDelPiattoCasualeTV.setText("Nessun piatto trovato");
+            // If no match on nutrienti, fall back to any available dish (prefer personal/base merged list)
+            if (listaPiatti == null || listaPiatti.isEmpty()) {
+                if (nomeDelPiattoCasualeTV != null) nomeDelPiattoCasualeTV.setText("Nessun piatto trovato");
+                return;
+            }
+            // pick random from full list and inform user
+            randomGenerator = new Random();
+            int idx = randomGenerator.nextInt(listaPiatti.size());
+            Piatto fallback = listaPiatti.get(idx);
+            if (nomeDelPiattoCasualeTV != null && fallback != null && fallback.getNomePiatto() != null) {
+                nomeDelPiattoCasualeTV.setText(fallback.getNomePiatto());
+            }
+            Toast.makeText(this, "Nessun piatto corrisponde alla proteina '" + proteinaScelta + "' — mostro un piatto casuale.", Toast.LENGTH_SHORT).show();
             return;
         }
 
