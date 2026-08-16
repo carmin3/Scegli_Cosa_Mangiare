@@ -41,7 +41,7 @@ public class ListaPiattiActivity extends AppCompatActivity {
         initWidgets();
         hideFilter();
         backHomeActivity();
-        goToAggiuntaPiattoActivity();
+        goToAggiuntaPiattiActivity();
         // show the add button by default
         mostraTastoAggiunta();
 
