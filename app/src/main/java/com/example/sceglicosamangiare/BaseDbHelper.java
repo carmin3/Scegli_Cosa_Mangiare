@@ -3,9 +3,19 @@ package com.example.sceglicosamangiare;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStream;
+
+import android.database.sqlite.SQLiteException;
+
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public class BaseDbHelper {
@@ -23,13 +33,26 @@ public class BaseDbHelper {
         try {
             if (!destFile.getParentFile().exists()) destFile.getParentFile().mkdirs();
             if (!destFile.exists()) {
-                InputStream is = ctx.getAssets().open(assetName);
-                FileOutputStream fos = new FileOutputStream(destFile);
-                byte[] buf = new byte[4096];
-                int r;
-                while ((r = is.read(buf)) > 0) fos.write(buf, 0, r);
-                fos.close();
-                is.close();
+                // create DB by executing SQL in assets/base_seed.sql if present
+                try {
+                    InputStream is = ctx.getAssets().open("base_seed.sql");
+                    BufferedReader br = new BufferedReader(new InputStreamReader(is));
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = br.readLine()) != null) sb.append(line).append('\n');
+                    br.close();
+                    String sql = sb.toString();
+                    SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(destFile.getPath(), null);
+                    String[] parts = sql.split(";\n");
+                    for (String part : parts) {
+                        String t = part.trim();
+                        if (t.isEmpty()) continue;
+                        try { db.execSQL(t); } catch (SQLiteException se) { Log.w("BaseDbHelper", "execSQL failed", se); }
+                    }
+                    db.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

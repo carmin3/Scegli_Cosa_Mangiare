@@ -5,9 +5,20 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
@@ -200,6 +211,117 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         int rows = db.update(PIATTO_TABLE, cv, COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
         db.close();
         return rows > 0;
+    }
+
+    // export personal DB to JSON file (returns number of exported rows or -1 on error)
+    public int exportToJsonFile(File outFile) {
+        JSONArray arr = new JSONArray();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT * FROM " + PIATTO_TABLE, null);
+        try {
+            if (c.moveToFirst()) {
+                do {
+                    JSONObject o = new JSONObject();
+                    int id = c.getInt(c.getColumnIndex(COLUMN_ID));
+                    o.put("id", id);
+                    o.put("nome", c.optString(c.getColumnIndex(COLUMN_NOME_PIATTO)));
+                    o.put("portata", c.optString(c.getColumnIndex(COLUMN_PORTATA_PIATTO)));
+                    o.put("nutrienti", c.optString(c.getColumnIndex(COLUMN_NUTRIENTI_PIATTO)));
+                    o.put("personale", c.getInt(c.getColumnIndex(COLUMN_PERSONALI)) == 1);
+                    int favIdx = c.getColumnIndex(COLUMN_FAVORITO);
+                    if (favIdx >= 0) o.put("favorito", c.getInt(favIdx) == 1);
+                    int baseIdx = c.getColumnIndex(COLUMN_BASE_ID);
+                    if (baseIdx >= 0 && !c.isNull(baseIdx)) o.put("base_id", c.getInt(baseIdx));
+                    int tombIdx = c.getColumnIndex(COLUMN_TOMBSTONE);
+                    if (tombIdx >= 0) o.put("tombstone", c.getInt(tombIdx) == 1);
+                    arr.put(o);
+                } while (c.moveToNext());
+            }
+            // write to file
+            FileOutputStream fos = new FileOutputStream(outFile);
+            fos.write(arr.toString(2).getBytes());
+            fos.close();
+            return arr.length();
+        } catch (Exception e) {
+            Log.e("DB_EXPORT", "export error", e);
+            return -1;
+        } finally {
+            if (c != null && !c.isClosed()) c.close();
+            db.close();
+        }
+    }
+
+    // import JSON array merging into personal DB
+    public int importFromJsonFile(File inFile) {
+        try {
+            FileInputStream fis = new FileInputStream(inFile);
+            BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) sb.append(line).append('\n');
+            br.close();
+            JSONArray arr = new JSONArray(sb.toString());
+            int processed = 0;
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject o = arr.getJSONObject(i);
+                String nome = o.optString("nome", "");
+                String portata = o.optString("portata", "");
+                String nutrienti = o.optString("nutrienti", "");
+                boolean favorito = o.optBoolean("favorito", false);
+                Integer baseId = null;
+                if (o.has("base_id")) baseId = o.optInt("base_id");
+                // merge logic: if base_id exists and personal override exists -> update; else insert
+                if (baseId != null) {
+                    Piatto existing = getPersonalByBaseId(baseId);
+                    if (existing != null) {
+                        existing.setNomePiatto(nome);
+                        existing.setPortata(portata);
+                        existing.setNutrienti(nutrienti);
+                        existing.setFavorito(favorito);
+                        updatePersonalById(existing.getId(), existing);
+                        processed++;
+                        continue;
+                    } else {
+                        Piatto newP = new Piatto(-1, nome, portata, nutrienti, true, favorito, baseId, false);
+                        long nid = insertPersonal(newP, baseId);
+                        if (nid != -1) processed++;
+                        continue;
+                    }
+                }
+                // else try by id
+                if (o.has("id")) {
+                    int id = o.optInt("id", -1);
+                    if (id >= 0) {
+                        Piatto ex = getPersonalById(id);
+                        if (ex != null) {
+                            ex.setNomePiatto(nome);
+                            ex.setPortata(portata);
+                            ex.setNutrienti(nutrienti);
+                            ex.setFavorito(favorito);
+                            updatePersonalById(id, ex);
+                            processed++;
+                            continue;
+                        }
+                    }
+                }
+                // otherwise insert as new personal
+                Piatto newP = new Piatto(-1, nome, portata, nutrienti, true, favorito, null, false);
+                long nid = insertPersonal(newP, null);
+                if (nid != -1) processed++;
+            }
+            return processed;
+        } catch (Exception e) {
+            Log.e("DB_IMPORT", "import error", e);
+            return -1;
+        }
+    }
+
+    // clear personal DB content (delete all rows)
+    public boolean clearPersonal() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rows = db.delete(PIATTO_TABLE, null, null);
+        db.close();
+        return rows >= 0;
     }
 
 }
