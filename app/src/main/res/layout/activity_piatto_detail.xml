@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/Verde_BG"
     android:orientation="vertical"
-    tools:context=".PiattoPropostoActivity">
+    tools:context="PiattoPropostoActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"

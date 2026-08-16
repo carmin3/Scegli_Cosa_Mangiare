@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -21,7 +22,7 @@ public class ListaPiattiActivity extends AppCompatActivity {
     private String currentSearchText = "";
     private SearchView searchView;
     private ImageButton filterBtn;
-    private android.widget.LinearLayout filtriPiattoLL;
+    private LinearLayout filtriPiattoLL;
     private boolean filterHidden = true;
     private Button aggiuntapiattoactivityBtn;
     private PiattoRepository repo;
@@ -42,21 +43,18 @@ public class ListaPiattiActivity extends AppCompatActivity {
         hideFilter();
         backHomeActivity();
         goToAggiuntaPiattiActivity();
-        // show the add button by default
         mostraTastoAggiunta();
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // refresh list when returning from other activities
         importaDatabase();
         setUpList();
     }
 
     private void setUpList() {
-        listView = (ListView) findViewById(R.id.listView);
+        listView = findViewById(R.id.listView);
         if (listaPiatti == null || listaPiatti.isEmpty()) {
             if (listView != null) listView.setVisibility(View.GONE);
             if (emptyStateTV != null) emptyStateTV.setVisibility(View.VISIBLE);
@@ -64,10 +62,10 @@ public class ListaPiattiActivity extends AppCompatActivity {
         }
         if (emptyStateTV != null) emptyStateTV.setVisibility(View.GONE);
         if (listView != null) {
+            listView.setVisibility(View.VISIBLE);
             PiattoListAdapter adapter = new PiattoListAdapter(getApplicationContext(), 0, listaPiatti);
             listView.setAdapter(adapter);
 
-            // ensure clicks on rows open detail
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -83,26 +81,25 @@ public class ListaPiattiActivity extends AppCompatActivity {
     }
 
     private void backHomeActivity() {
-        ImageButton homeBtn = (ImageButton)findViewById(R.id.homeBtn);
+        ImageButton homeBtn = findViewById(R.id.homeBtn);
         if (homeBtn != null) {
             homeBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v)
-                {
+                public void onClick(View v) {
                     Intent backHome = new Intent(ListaPiattiActivity.this, MainActivity.class);
                     startActivity(backHome);
+                    finish();
                 }
             });
         }
     }
 
     private void goToAggiuntaPiattiActivity() {
-        Button vaiadaggiuntapiattiactivity = (Button)findViewById(R.id.aggiuntapiattoactivityBtn);
-        if (vaiadaggiuntapiattiactivity != null) {
-            vaiadaggiuntapiattiactivity.setOnClickListener(new View.OnClickListener() {
+        aggiuntapiattoactivityBtn = findViewById(R.id.aggiuntapiattoactivityBtn);
+        if (aggiuntapiattoactivityBtn != null) {
+            aggiuntapiattoactivityBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v)
-                {
+                public void onClick(View v) {
                     Intent vaiAdAggiuntaPiattiActivity = new Intent(ListaPiattiActivity.this, AggiuntaPiattiActivity.class);
                     startActivity(vaiAdAggiuntaPiattiActivity);
                 }
@@ -110,19 +107,123 @@ public class ListaPiattiActivity extends AppCompatActivity {
         }
     }
 
-    // importiamo il database
     public void importaDatabase() {
+        if (repo == null) {
+            repo = new PiattoRepository(ListaPiattiActivity.this);
+        }
 
-        listaPiatti = new ArrayList<Piatto>();
-        repo = new PiattoRepository(ListaPiattiActivity.this);
-        listaPiatti = repo.getAllData();
+        ArrayList<Piatto> tuttiIPiatti = repo.getAllData();
+        listaPiatti = new ArrayList<>();
 
+        if (tuttiIPiatti != null) {
+            for (Piatto p : tuttiIPiatti) {
+                if (p.getTombstone() != null && p.getTombstone()) {
+                    continue;
+                }
+
+                boolean matchesSearch = currentSearchText.isEmpty() ||
+                        (p.getNomePiatto() != null && p.getNomePiatto().toLowerCase().contains(currentSearchText.toLowerCase()));
+
+                boolean matchesFilter = true;
+                if (selectedFilter.equalsIgnoreCase("personali")) {
+                    matchesFilter = p.getPersonale() != null && p.getPersonale();
+                } else if (!selectedFilter.equalsIgnoreCase("all")) {
+                    matchesFilter = p.getPortata() != null && p.getPortata().equalsIgnoreCase(selectedFilter);
+                }
+
+                if (matchesSearch && matchesFilter) {
+                    listaPiatti.add(p);
+                }
+            }
+        }
     }
 
-    // methods used elsewhere in class (kept for compatibility)
-    private void initSearchWidgets() {}
-    private void initWidgets() {}
-    private void hideFilter() {}
-    private void mostraTastoAggiunta() {}
+    private void initSearchWidgets() {
+        searchView = findViewById(R.id.listaPiattiSearchView);
+        if (searchView != null) {
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    return false;
+                }
 
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    currentSearchText = newText != null ? newText : "";
+                    importaDatabase();
+                    setUpList();
+                    return true;
+                }
+            });
+        }
+    }
+
+    private void initWidgets() {
+        filterBtn = findViewById(R.id.filterBtn);
+        filtriPiattoLL = findViewById(R.id.filtriPiattoLL);
+
+        if (filterBtn != null && filtriPiattoLL != null) {
+            filterBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (filterHidden) {
+                        filtriPiattoLL.setVisibility(View.VISIBLE);
+                        filterHidden = false;
+                    } else {
+                        hideFilter();
+                    }
+                }
+            });
+        }
+    }
+
+    private void hideFilter() {
+        if (filtriPiattoLL != null) {
+            filtriPiattoLL.setVisibility(View.GONE);
+            filterHidden = true;
+        }
+    }
+
+    private void mostraTastoAggiunta() {
+        if (aggiuntapiattoactivityBtn != null) {
+            aggiuntapiattoactivityBtn.setVisibility(View.VISIBLE);
+        }
+    }
+
+    // Metodi collegati agli android:onClick definite nell'XML
+    public void tuttiFilterTapped(View view) {
+        selectedFilter = "all";
+        importaDatabase();
+        setUpList();
+    }
+
+    public void primiFilterTapped(View view) {
+        selectedFilter = "Primo";
+        importaDatabase();
+        setUpList();
+    }
+
+    public void secondiFilterTapped(View view) {
+        selectedFilter = "Secondo";
+        importaDatabase();
+        setUpList();
+    }
+
+    public void contorniFilterTapped(View view) {
+        selectedFilter = "Contorno";
+        importaDatabase();
+        setUpList();
+    }
+
+    public void piattiuniciFilterTapped(View view) {
+        selectedFilter = "Piatto Unico";
+        importaDatabase();
+        setUpList();
+    }
+
+    public void personaliFilterTapped(View view) {
+        selectedFilter = "personali";
+        importaDatabase();
+        setUpList();
+    }
 }
