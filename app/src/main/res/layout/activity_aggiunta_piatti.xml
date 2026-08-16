@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/Verde_BG"
-    tools:context=".PiattoPropostoActivity">
+    tools:context=".AggiuntaPiattiActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -70,7 +70,7 @@
         android:orientation="vertical">
 
         <EditText
-            android:id="@+id/nomeDelPiattoCasualeTV"
+            android:id="@+id/nomeInput"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
@@ -79,14 +79,14 @@
             android:hint="Nome Piatto"
             android:singleLine="true"
             android:textSize="24sp"
-            app:layout_constraintBottom_toTopOf="@id/portataSpinner"
+            app:layout_constraintBottom_toTopOf="@id/spinnerPortata"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/portataSpinner"
+            app:layout_constraintStart_toStartOf="@+id/spinnerPortata"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0" />
 
         <Spinner
-            android:id="@+id/portataSpinner"
+            android:id="@+id/spinnerPortata"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
@@ -101,19 +101,19 @@
             app:layout_constraintVertical_bias="0.2" />
 
         <Spinner
-            android:id="@+id/nutrientiSpinner"
+            android:id="@+id/spinnerNutrienti"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:entries="@array/chenutrienti"
             android:gravity="start"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/portataSpinner"
-            app:layout_constraintTop_toBottomOf="@id/portataSpinner"
+            app:layout_constraintStart_toStartOf="@+id/spinnerPortata"
+            app:layout_constraintTop_toBottomOf="@id/spinnerPortata"
             app:layout_constraintVertical_bias="0.0" />
 
         <Button
-            android:id="@+id/aggiungiPiattoBtn"
+            android:id="@+id/salvaBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Aggiungi il piatto!"
@@ -123,7 +123,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/nutrientiSpinner"
+            app:layout_constraintTop_toBottomOf="@id/spinnerNutrienti"
             app:layout_constraintVertical_bias="0.199" />
 
         <ListView
@@ -133,7 +133,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/aggiungiPiattoBtn"
+            app:layout_constraintTop_toBottomOf="@+id/salvaBtn"
             app:layout_constraintVertical_bias="0.0" />
 
 
