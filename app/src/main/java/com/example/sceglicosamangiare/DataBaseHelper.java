@@ -224,9 +224,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     JSONObject o = new JSONObject();
                     int id = c.getInt(c.getColumnIndex(COLUMN_ID));
                     o.put("id", id);
-                    o.put("nome", c.optString(c.getColumnIndex(COLUMN_NOME_PIATTO)));
-                    o.put("portata", c.optString(c.getColumnIndex(COLUMN_PORTATA_PIATTO)));
-                    o.put("nutrienti", c.optString(c.getColumnIndex(COLUMN_NUTRIENTI_PIATTO)));
+                    int nomeIdx = c.getColumnIndex(COLUMN_NOME_PIATTO);
+                    o.put("nome", (nomeIdx >= 0 && !c.isNull(nomeIdx)) ? c.getString(nomeIdx) : "");
+                    int portataIdx = c.getColumnIndex(COLUMN_PORTATA_PIATTO);
+                    o.put("portata", (portataIdx >= 0 && !c.isNull(portataIdx)) ? c.getString(portataIdx) : "");
+                    int nutrientiIdx = c.getColumnIndex(COLUMN_NUTRIENTI_PIATTO);
+                    o.put("nutrienti", (nutrientiIdx >= 0 && !c.isNull(nutrientiIdx)) ? c.getString(nutrientiIdx) : "");
                     o.put("personale", c.getInt(c.getColumnIndex(COLUMN_PERSONALI)) == 1);
                     int favIdx = c.getColumnIndex(COLUMN_FAVORITO);
                     if (favIdx >= 0) o.put("favorito", c.getInt(favIdx) == 1);
