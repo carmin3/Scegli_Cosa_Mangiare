@@ -1,5 +1,6 @@
 package com.example.sceglicosamangiare;
 
+import android.content.Intent;
 import android.widget.TextView;
 
 import java.util.ArrayList;
