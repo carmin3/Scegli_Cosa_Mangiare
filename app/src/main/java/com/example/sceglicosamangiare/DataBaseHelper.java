@@ -10,7 +10,6 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -19,6 +18,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
@@ -94,22 +94,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         String q = "SELECT * FROM " + PIATTO_TABLE + " WHERE " + COLUMN_ID + " = ?";
         Cursor c = db.rawQuery(q, new String[]{String.valueOf(id)});
         try {
-            if (c.moveToFirst()) {
-                int piattoIDDB = c.getInt(c.getColumnIndex(COLUMN_ID));
-                String nome = c.getString(c.getColumnIndex(COLUMN_NOME_PIATTO));
-                String portata = c.getString(c.getColumnIndex(COLUMN_PORTATA_PIATTO));
-                String nutrienti = c.getString(c.getColumnIndex(COLUMN_NUTRIENTI_PIATTO));
-                boolean personale = c.getInt(c.getColumnIndex(COLUMN_PERSONALI)) == 1;
-                boolean favorito = false;
-                int favIndex = c.getColumnIndex(COLUMN_FAVORITO);
-                if (favIndex >= 0) favorito = c.getInt(favIndex) == 1;
-                Integer baseId = null;
-                int baseIdx = c.getColumnIndex(COLUMN_BASE_ID);
-                if (baseIdx >= 0 && !c.isNull(baseIdx)) baseId = c.getInt(baseIdx);
-                boolean tomb = false;
-                int tombIdx = c.getColumnIndex(COLUMN_TOMBSTONE);
-                if (tombIdx >= 0) tomb = c.getInt(tombIdx) == 1;
-                return new Piatto(piattoIDDB, nome, portata, nutrienti, personale, favorito, baseId, tomb);
+            if (c != null && c.moveToFirst()) {
+                return getPiattoFromCursor(c);
             }
         } finally {
             if (c != null && !c.isClosed()) c.close();
@@ -123,19 +109,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         String q = "SELECT * FROM " + PIATTO_TABLE + " WHERE " + COLUMN_BASE_ID + " = ?";
         Cursor c = db.rawQuery(q, new String[]{String.valueOf(baseId)});
         try {
-            if (c.moveToFirst()) {
-                int piattoIDDB = c.getInt(c.getColumnIndex(COLUMN_ID));
-                String nome = c.getString(c.getColumnIndex(COLUMN_NOME_PIATTO));
-                String portata = c.getString(c.getColumnIndex(COLUMN_PORTATA_PIATTO));
-                String nutrienti = c.getString(c.getColumnIndex(COLUMN_NUTRIENTI_PIATTO));
-                boolean personale = c.getInt(c.getColumnIndex(COLUMN_PERSONALI)) == 1;
-                boolean favorito = false;
-                int favIndex = c.getColumnIndex(COLUMN_FAVORITO);
-                if (favIndex >= 0) favorito = c.getInt(favIndex) == 1;
-                boolean tomb = false;
-                int tombIdx = c.getColumnIndex(COLUMN_TOMBSTONE);
-                if (tombIdx >= 0) tomb = c.getInt(tombIdx) == 1;
-                return new Piatto(piattoIDDB, nome, portata, nutrienti, personale, favorito, baseId, tomb);
+            if (c != null && c.moveToFirst()) {
+                return getPiattoFromCursor(c);
             }
         } finally {
             if (c != null && !c.isClosed()) c.close();
@@ -144,30 +119,38 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return null;
     }
 
+    private Piatto getPiattoFromCursor(Cursor c) {
+        int idIdx = c.getColumnIndex(COLUMN_ID);
+        int nomeIdx = c.getColumnIndex(COLUMN_NOME_PIATTO);
+        int portataIdx = c.getColumnIndex(COLUMN_PORTATA_PIATTO);
+        int nutrientiIdx = c.getColumnIndex(COLUMN_NUTRIENTI_PIATTO);
+        int persIdx = c.getColumnIndex(COLUMN_PERSONALI);
+        int favIdx = c.getColumnIndex(COLUMN_FAVORITO);
+        int baseIdx = c.getColumnIndex(COLUMN_BASE_ID);
+        int tombIdx = c.getColumnIndex(COLUMN_TOMBSTONE);
+
+        int id = (idIdx != -1) ? c.getInt(idIdx) : -1;
+        String nome = (nomeIdx != -1) ? c.getString(nomeIdx) : "";
+        String portata = (portataIdx != -1) ? c.getString(portataIdx) : "";
+        String nutrienti = (nutrientiIdx != -1) ? c.getString(nutrientiIdx) : "";
+        boolean personale = (persIdx != -1) && c.getInt(persIdx) == 1;
+        boolean favorito = (favIdx != -1) && c.getInt(favIdx) == 1;
+        Integer baseId = null;
+        if (baseIdx != -1 && !c.isNull(baseIdx)) baseId = c.getInt(baseIdx);
+        boolean tombstone = (tombIdx != -1) && c.getInt(tombIdx) == 1;
+
+        return new Piatto(id, nome, portata, nutrienti, personale, favorito, baseId, tombstone);
+    }
+
     public ArrayList<Piatto> getAllPersonalNonTombstone() {
         ArrayList<Piatto> list = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         String q = "SELECT * FROM " + PIATTO_TABLE + " WHERE " + COLUMN_TOMBSTONE + " = 0";
         Cursor c = db.rawQuery(q, null);
         try {
-            if (c.moveToFirst()) {
+            if (c != null && c.moveToFirst()) {
                 do {
-                    int piattoIDDB = c.getInt(c.getColumnIndex(COLUMN_ID));
-                    String nome = c.getString(c.getColumnIndex(COLUMN_NOME_PIATTO));
-                    String portata = c.getString(c.getColumnIndex(COLUMN_PORTATA_PIATTO));
-                    String nutrienti = c.getString(c.getColumnIndex(COLUMN_NUTRIENTI_PIATTO));
-                    boolean personale = c.getInt(c.getColumnIndex(COLUMN_PERSONALI)) == 1;
-                    boolean favorito = false;
-                    int favIndex = c.getColumnIndex(COLUMN_FAVORITO);
-                    if (favIndex >= 0) favorito = c.getInt(favIndex) == 1;
-                    Integer baseId = null;
-                    int baseIdx = c.getColumnIndex(COLUMN_BASE_ID);
-                    if (baseIdx >= 0 && !c.isNull(baseIdx)) baseId = c.getInt(baseIdx);
-                    boolean tomb = false;
-                    int tombIdx = c.getColumnIndex(COLUMN_TOMBSTONE);
-                    if (tombIdx >= 0) tomb = c.getInt(tombIdx) == 1;
-                    Piatto p = new Piatto(piattoIDDB, nome, portata, nutrienti, personale, favorito, baseId, tomb);
-                    list.add(p);
+                    list.add(getPiattoFromCursor(c));
                 } while (c.moveToNext());
             }
         } finally {
@@ -213,40 +196,48 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return rows > 0;
     }
 
-    // export personal DB to JSON file (returns number of exported rows or -1 on error)
+    // export personal DB to JSON file
     public int exportToJsonFile(File outFile) {
+        try (FileOutputStream fos = new FileOutputStream(outFile)) {
+            return exportToOutputStream(fos);
+        } catch (Exception e) {
+            Log.e("DB_EXPORT", "file export error", e);
+            return -1;
+        }
+    }
+
+    public int exportToOutputStream(OutputStream os) {
         JSONArray arr = new JSONArray();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery("SELECT * FROM " + PIATTO_TABLE, null);
         try {
-            if (c.moveToFirst()) {
+            if (c != null && c.moveToFirst()) {
+                int idIdx = c.getColumnIndex(COLUMN_ID);
+                int nomeIdx = c.getColumnIndex(COLUMN_NOME_PIATTO);
+                int portataIdx = c.getColumnIndex(COLUMN_PORTATA_PIATTO);
+                int nutrientiIdx = c.getColumnIndex(COLUMN_NUTRIENTI_PIATTO);
+                int persIdx = c.getColumnIndex(COLUMN_PERSONALI);
+                int favIdx = c.getColumnIndex(COLUMN_FAVORITO);
+                int baseIdx = c.getColumnIndex(COLUMN_BASE_ID);
+                int tombIdx = c.getColumnIndex(COLUMN_TOMBSTONE);
+
                 do {
                     JSONObject o = new JSONObject();
-                    int id = c.getInt(c.getColumnIndex(COLUMN_ID));
-                    o.put("id", id);
-                    int nomeIdx = c.getColumnIndex(COLUMN_NOME_PIATTO);
-                    o.put("nome", (nomeIdx >= 0 && !c.isNull(nomeIdx)) ? c.getString(nomeIdx) : "");
-                    int portataIdx = c.getColumnIndex(COLUMN_PORTATA_PIATTO);
-                    o.put("portata", (portataIdx >= 0 && !c.isNull(portataIdx)) ? c.getString(portataIdx) : "");
-                    int nutrientiIdx = c.getColumnIndex(COLUMN_NUTRIENTI_PIATTO);
-                    o.put("nutrienti", (nutrientiIdx >= 0 && !c.isNull(nutrientiIdx)) ? c.getString(nutrientiIdx) : "");
-                    o.put("personale", c.getInt(c.getColumnIndex(COLUMN_PERSONALI)) == 1);
-                    int favIdx = c.getColumnIndex(COLUMN_FAVORITO);
-                    if (favIdx >= 0) o.put("favorito", c.getInt(favIdx) == 1);
-                    int baseIdx = c.getColumnIndex(COLUMN_BASE_ID);
-                    if (baseIdx >= 0 && !c.isNull(baseIdx)) o.put("base_id", c.getInt(baseIdx));
-                    int tombIdx = c.getColumnIndex(COLUMN_TOMBSTONE);
-                    if (tombIdx >= 0) o.put("tombstone", c.getInt(tombIdx) == 1);
+                    o.put("id", (idIdx != -1) ? c.getInt(idIdx) : -1);
+                    o.put("nome", (nomeIdx != -1 && !c.isNull(nomeIdx)) ? c.getString(nomeIdx) : "");
+                    o.put("portata", (portataIdx != -1 && !c.isNull(portataIdx)) ? c.getString(portataIdx) : "");
+                    o.put("nutrienti", (nutrientiIdx != -1 && !c.isNull(nutrientiIdx)) ? c.getString(nutrientiIdx) : "");
+                    o.put("personale", (persIdx != -1) && c.getInt(persIdx) == 1);
+                    if (favIdx != -1) o.put("favorito", c.getInt(favIdx) == 1);
+                    if (baseIdx != -1 && !c.isNull(baseIdx)) o.put("base_id", c.getInt(baseIdx));
+                    if (tombIdx != -1) o.put("tombstone", c.getInt(tombIdx) == 1);
                     arr.put(o);
                 } while (c.moveToNext());
             }
-            // write to file
-            FileOutputStream fos = new FileOutputStream(outFile);
-            fos.write(arr.toString(2).getBytes());
-            fos.close();
+            os.write(arr.toString(2).getBytes());
             return arr.length();
         } catch (Exception e) {
-            Log.e("DB_EXPORT", "export error", e);
+            Log.e("DB_EXPORT", "stream export error", e);
             return -1;
         } finally {
             if (c != null && !c.isClosed()) c.close();
@@ -256,13 +247,22 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     // import JSON array merging into personal DB
     public int importFromJsonFile(File inFile) {
+        try (FileInputStream fis = new FileInputStream(inFile)) {
+            return importFromInputStream(fis);
+        } catch (Exception e) {
+            Log.e("DB_IMPORT", "file import error", e);
+            return -1;
+        }
+    }
+
+    public int importFromInputStream(InputStream is) {
         try {
-            FileInputStream fis = new FileInputStream(inFile);
-            BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
             StringBuilder sb = new StringBuilder();
             String line;
-            while ((line = br.readLine()) != null) sb.append(line).append('\n');
-            br.close();
+            while ((line = br.readLine()) != null) {
+                sb.append(line).append('\n');
+            }
             JSONArray arr = new JSONArray(sb.toString());
             int processed = 0;
             for (int i = 0; i < arr.length(); i++) {
@@ -273,7 +273,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 boolean favorito = o.optBoolean("favorito", false);
                 Integer baseId = null;
                 if (o.has("base_id")) baseId = o.optInt("base_id");
-                // merge logic: if base_id exists and personal override exists -> update; else insert
+
+                // merge logic
                 if (baseId != null) {
                     Piatto existing = getPersonalByBaseId(baseId);
                     if (existing != null) {
@@ -282,39 +283,34 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                         existing.setNutrienti(nutrienti);
                         existing.setFavorito(favorito);
                         updatePersonalById(existing.getId(), existing);
-                        processed++;
-                        continue;
                     } else {
                         Piatto newP = new Piatto(-1, nome, portata, nutrienti, true, favorito, baseId, false);
-                        long nid = insertPersonal(newP, baseId);
-                        if (nid != -1) processed++;
-                        continue;
+                        insertPersonal(newP, baseId);
                     }
-                }
-                // else try by id
-                if (o.has("id")) {
+                    processed++;
+                } else if (o.has("id")) {
                     int id = o.optInt("id", -1);
-                    if (id >= 0) {
-                        Piatto ex = getPersonalById(id);
-                        if (ex != null) {
-                            ex.setNomePiatto(nome);
-                            ex.setPortata(portata);
-                            ex.setNutrienti(nutrienti);
-                            ex.setFavorito(favorito);
-                            updatePersonalById(id, ex);
-                            processed++;
-                            continue;
-                        }
+                    Piatto ex = (id >= 0) ? getPersonalById(id) : null;
+                    if (ex != null) {
+                        ex.setNomePiatto(nome);
+                        ex.setPortata(portata);
+                        ex.setNutrienti(nutrienti);
+                        ex.setFavorito(favorito);
+                        updatePersonalById(id, ex);
+                    } else {
+                        Piatto newP = new Piatto(-1, nome, portata, nutrienti, true, favorito, null, false);
+                        insertPersonal(newP, null);
                     }
+                    processed++;
+                } else {
+                    Piatto newP = new Piatto(-1, nome, portata, nutrienti, true, favorito, null, false);
+                    long nid = insertPersonal(newP, null);
+                    if (nid != -1) processed++;
                 }
-                // otherwise insert as new personal
-                Piatto newP = new Piatto(-1, nome, portata, nutrienti, true, favorito, null, false);
-                long nid = insertPersonal(newP, null);
-                if (nid != -1) processed++;
             }
             return processed;
         } catch (Exception e) {
-            Log.e("DB_IMPORT", "import error", e);
+            Log.e("DB_IMPORT", "stream import error", e);
             return -1;
         }
     }

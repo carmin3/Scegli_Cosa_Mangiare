@@ -40,17 +40,6 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        ImageButton dbBtn = (ImageButton)findViewById(R.id.dbBtn);
-        if (dbBtn != null) {
-            dbBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i = new Intent(MainActivity.this, DbActionsActivity.class);
-                    startActivity(i);
-                }
-            });
-        }
-
         ImageButton settingsBtn = (ImageButton)findViewById(R.id.settingsBtn);
         if (settingsBtn != null) {
             settingsBtn.setOnClickListener(new View.OnClickListener() {

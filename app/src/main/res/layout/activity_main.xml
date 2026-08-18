@@ -68,19 +68,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.8" />
 
-        <ImageButton
-            android:id="@+id/dbBtn"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="@null"
-            android:src="@android:drawable/ic_menu_manage"
-            app:tint="@color/black"
-            app:layout_constraintTop_toTopOf="@id/ListaBtn"
-            app:layout_constraintStart_toEndOf="@id/ListaBtn"
-            android:contentDescription="Azioni DB"
-            android:layout_marginStart="8dp"
-            />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

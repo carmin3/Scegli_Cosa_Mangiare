@@ -17,4 +17,6 @@
         <item>Altro</item>
     </string-array>
 
+    <string name="backup_ripristino">Backup e Ripristino ricette</string>
+    <string name="impostazioni">IMPOSTAZIONI</string>
 </resources>
