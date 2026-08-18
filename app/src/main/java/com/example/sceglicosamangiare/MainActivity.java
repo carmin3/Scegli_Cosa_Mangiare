@@ -51,5 +51,16 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
+        ImageButton settingsBtn = (ImageButton)findViewById(R.id.settingsBtn);
+        if (settingsBtn != null) {
+            settingsBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(MainActivity.this, ImpostazioniActivity.class);
+                    startActivity(i);
+                }
+            });
+        }
+
     }
 }

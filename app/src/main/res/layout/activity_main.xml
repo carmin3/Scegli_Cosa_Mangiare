@@ -1,52 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/Verde_BG"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/ProponiPiattoBtn"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Proponimi un piatto!"
-        android:textSize="24sp"
-        app:backgroundTint="@color/Verde_scuro"
-        app:cornerRadius="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.7" />
+        android:padding="8dp">
 
-    <ImageButton
-        android:id="@+id/ListaBtn"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:background="@color/Verde_BG"
-        android:scaleX="2"
-        android:scaleY="2"
-        android:src="@drawable/list_icon"
-        app:tint="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.9" />
+        <ImageButton
+            android:id="@+id/settingsBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:background="@null"
+            android:src="@android:drawable/ic_menu_preferences"
+            app:tint="@color/Verde_scuro" />
 
-    <ImageButton
-        android:id="@+id/dbBtn"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="@null"
-        android:src="@android:drawable/ic_menu_manage"
-        app:tint="@color/black"
-        app:layout_constraintTop_toTopOf="@id/ListaBtn"
-        app:layout_constraintStart_toEndOf="@id/ListaBtn"
-        android:contentDescription="Azioni DB"
-        android:layout_marginStart="8dp"
-        />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/che_mangiamo"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </RelativeLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/ProponiPiattoBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Proponimi un piatto!"
+            android:textSize="24sp"
+            app:backgroundTint="@color/Verde_scuro"
+            app:cornerRadius="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.65" />
+
+        <ImageButton
+            android:id="@+id/ListaBtn"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@color/Verde_BG"
+            android:scaleX="2"
+            android:scaleY="2"
+            android:src="@drawable/list_icon"
+            app:tint="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.8" />
+
+        <ImageButton
+            android:id="@+id/dbBtn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@null"
+            android:src="@android:drawable/ic_menu_manage"
+            app:tint="@color/black"
+            app:layout_constraintTop_toTopOf="@id/ListaBtn"
+            app:layout_constraintStart_toEndOf="@id/ListaBtn"
+            android:contentDescription="Azioni DB"
+            android:layout_marginStart="8dp"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

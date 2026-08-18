@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Scegli Cosa Mangiare</string>
     <string name="lista_piatti">Lista Piatti</string>
+    <string name="che_mangiamo">Che mangiamo oggi?</string>
     <string-array name="cheportata">
         <item>Che portata è?</item>
         <item>Primo</item>
