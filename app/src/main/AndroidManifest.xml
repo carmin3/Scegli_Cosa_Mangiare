@@ -9,12 +9,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ScegliCosaMangiare">
-        <activity android:name=".AggiuntaPiattiActivity" />
-        <activity android:name=".ListaPiattiActivity" />
-        <activity android:name=".PiattoPropostoActivity" />
-        <activity android:name=".PiattoDetailActivity" />
-        <activity android:name=".DbActionsActivity" />
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".AggiuntaPiattiActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ListaPiattiActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PiattoPropostoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PiattoDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DbActionsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
