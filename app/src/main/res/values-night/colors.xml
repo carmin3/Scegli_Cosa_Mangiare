@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Inversione Colori Testo/Sfondo per Dark Mode -->
+    <color name="black">#FFFFFFFF</color> <!-- Testi neri -> Bianchi -->
+    <color name="white">#FF000000</color> <!-- Testi bianchi -> Neri -->
+    <color name="Verde_BG">#FF000000</color> <!-- Sfondo -> Nero -->
+
+    <!-- I colori che restano identici -->
+    <color name="Verde_scuro">#64AF64</color>
+    <color name="Verde_chiaro">#C8FAC8</color>
+    <color name="Giallo">#FFC107</color>
+    <color name="Rosso">#D32F2F</color>
+</resources>
