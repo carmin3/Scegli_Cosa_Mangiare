@@ -19,4 +19,11 @@
 
     <string name="backup_ripristino">Backup e Ripristino ricette</string>
     <string name="impostazioni">IMPOSTAZIONI</string>
+    <string name="proponimi_un_piatto">Proponimi un piatto!</string>
+    <string name="aggiungi_ai_preferiti">AGGIUNGI AI PREFERITI</string>
+    <string name="rimuovi_dai_preferiti">RIMUOVI DAI PREFERITI</string>
+    <string name="settings_description">Impostazioni</string>
+    <string name="lista_piatti_description">Lista piatti</string>
+    <string name="home_description">Torna alla home</string>
+    <string name="nessun_piatto_trovato">Nessun piatto trovato</string>
 </resources>

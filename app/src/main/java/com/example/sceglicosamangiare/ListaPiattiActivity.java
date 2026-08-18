@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -20,7 +19,6 @@ public class ListaPiattiActivity extends AppCompatActivity {
     private ListView listView;
     private String selectedFilter = "all";
     private String currentSearchText = "";
-    private SearchView searchView;
     private ImageButton filterBtn;
     private LinearLayout filtriPiattoLL;
     private boolean filterHidden = true;
@@ -66,15 +64,12 @@ public class ListaPiattiActivity extends AppCompatActivity {
             PiattoListAdapter adapter = new PiattoListAdapter(getApplicationContext(), 0, listaPiatti);
             listView.setAdapter(adapter);
 
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Piatto selected = (Piatto) parent.getItemAtPosition(position);
-                    if (selected != null) {
-                        Intent detail = new Intent(ListaPiattiActivity.this, PiattoDetailActivity.class);
-                        detail.putExtra(PiattoDetailActivity.EXTRA_PIATTO_ID, selected.getId());
-                        startActivity(detail);
-                    }
+            listView.setOnItemClickListener((parent, view, position, id) -> {
+                Piatto selected = (Piatto) parent.getItemAtPosition(position);
+                if (selected != null) {
+                    Intent detail = new Intent(ListaPiattiActivity.this, PiattoDetailActivity.class);
+                    detail.putExtra(PiattoDetailActivity.EXTRA_PIATTO_ID, selected.getId());
+                    startActivity(detail);
                 }
             });
         }
@@ -83,13 +78,10 @@ public class ListaPiattiActivity extends AppCompatActivity {
     private void backHomeActivity() {
         ImageButton homeBtn = findViewById(R.id.homeBtn);
         if (homeBtn != null) {
-            homeBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent backHome = new Intent(ListaPiattiActivity.this, MainActivity.class);
-                    startActivity(backHome);
-                    finish();
-                }
+            homeBtn.setOnClickListener(v -> {
+                Intent backHome = new Intent(ListaPiattiActivity.this, MainActivity.class);
+                startActivity(backHome);
+                finish();
             });
         }
     }
@@ -97,12 +89,9 @@ public class ListaPiattiActivity extends AppCompatActivity {
     private void goToAggiuntaPiattiActivity() {
         aggiuntapiattoactivityBtn = findViewById(R.id.aggiuntapiattoactivityBtn);
         if (aggiuntapiattoactivityBtn != null) {
-            aggiuntapiattoactivityBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent vaiAdAggiuntaPiattiActivity = new Intent(ListaPiattiActivity.this, AggiuntaPiattiActivity.class);
-                    startActivity(vaiAdAggiuntaPiattiActivity);
-                }
+            aggiuntapiattoactivityBtn.setOnClickListener(v -> {
+                Intent vaiAdAggiuntaPiattiActivity = new Intent(ListaPiattiActivity.this, AggiuntaPiattiActivity.class);
+                startActivity(vaiAdAggiuntaPiattiActivity);
             });
         }
     }
@@ -139,7 +128,7 @@ public class ListaPiattiActivity extends AppCompatActivity {
     }
 
     private void initSearchWidgets() {
-        searchView = findViewById(R.id.listaPiattiSearchView);
+        SearchView searchView = findViewById(R.id.listaPiattiSearchView);
         if (searchView != null) {
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
@@ -163,15 +152,12 @@ public class ListaPiattiActivity extends AppCompatActivity {
         filtriPiattoLL = findViewById(R.id.filtriPiattoLL);
 
         if (filterBtn != null && filtriPiattoLL != null) {
-            filterBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (filterHidden) {
-                        filtriPiattoLL.setVisibility(View.VISIBLE);
-                        filterHidden = false;
-                    } else {
-                        hideFilter();
-                    }
+            filterBtn.setOnClickListener(v -> {
+                if (filterHidden) {
+                    filtriPiattoLL.setVisibility(View.VISIBLE);
+                    filterHidden = false;
+                } else {
+                    hideFilter();
                 }
             });
         }

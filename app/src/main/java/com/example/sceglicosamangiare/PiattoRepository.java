@@ -68,12 +68,36 @@ public class PiattoRepository {
     public boolean setFavorite(int id, boolean value) {
         // if personal has id -> update
         Piatto p = personal.getPersonalById(id);
-        if (p != null) return personal.setFavoritePersonal(id, value);
+        if (p != null) {
+            if (p.getBaseId() != null && (p.getNomePiatto() == null || p.getNomePiatto().isEmpty())) {
+                Piatto bp = base.getBaseById(p.getBaseId());
+                if (bp != null) {
+                    p.setNomePiatto(bp.getNomePiatto());
+                    p.setPortata(bp.getPortata());
+                    p.setNutrienti(bp.getNutrienti());
+                    personal.updatePersonalById(p.getId(), p);
+                }
+            }
+            return personal.setFavoritePersonal(id, value);
+        }
         // else if exists personal override by base id
         Piatto p2 = personal.getPersonalByBaseId(id);
-        if (p2 != null) return personal.setFavoritePersonal(p2.getId(), value);
+        if (p2 != null) {
+            if (p2.getNomePiatto() == null || p2.getNomePiatto().isEmpty()) {
+                Piatto bp = base.getBaseById(id);
+                if (bp != null) {
+                    p2.setNomePiatto(bp.getNomePiatto());
+                    p2.setPortata(bp.getPortata());
+                    p2.setNutrienti(bp.getNutrienti());
+                    personal.updatePersonalById(p2.getId(), p2);
+                }
+            }
+            return personal.setFavoritePersonal(p2.getId(), value);
+        }
         // else create override with favorite
-        Piatto newP = new Piatto(-1, "", "", "", true, value, id, false);
+        Piatto baseP = base.getBaseById(id);
+        if (baseP == null) return false;
+        Piatto newP = new Piatto(-1, baseP.getNomePiatto(), baseP.getPortata(), baseP.getNutrienti(), true, value, id, false);
         long nid = personal.insertPersonal(newP, id);
         return nid != -1;
     }

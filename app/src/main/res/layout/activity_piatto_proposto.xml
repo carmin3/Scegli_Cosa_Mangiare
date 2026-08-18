@@ -27,7 +27,7 @@
             android:scaleX="0.8"
             android:scaleY="0.8"
             android:src="@drawable/home_icon"
-            android:tint="@color/Verde_scuro" />
+            app:tint="@color/Verde_scuro" />
 
 
         <TextView
@@ -53,7 +53,7 @@
             android:scaleX="0.8"
             android:scaleY="0.8"
             android:src="@drawable/refresh"
-            android:tint="@color/Verde_scuro" />
+            app:tint="@color/Verde_scuro" />
 
     </RelativeLayout>
 
@@ -74,11 +74,8 @@
             android:id="@+id/nomeDelPiattoCasualeTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="false"
-            android:layout_alignParentRight="false"
-            android:layout_alignParentBottom="false"
             android:layout_centerInParent="true"
-            android:layout_gravity="center"
+            android:gravity="center"
             android:text="textview"
             android:textAllCaps="true"
             android:textColor="@color/black"

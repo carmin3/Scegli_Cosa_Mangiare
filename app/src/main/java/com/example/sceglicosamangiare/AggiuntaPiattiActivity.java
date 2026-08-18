@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -65,65 +64,59 @@ public class AggiuntaPiattiActivity extends AppCompatActivity {
         }
 
         if (salvaBtn != null) {
-            salvaBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String nomeInput = TVnomeinput != null && TVnomeinput.getText() != null ? TVnomeinput.getText().toString().trim() : "";
-                    if (nomeInput.isEmpty()) {
-                        Toast.makeText(AggiuntaPiattiActivity.this, "Inserisci il nome del piatto", Toast.LENGTH_SHORT).show();
+            salvaBtn.setOnClickListener(v -> {
+                String nomeInput = TVnomeinput != null && TVnomeinput.getText() != null ? TVnomeinput.getText().toString().trim() : "";
+                if (nomeInput.isEmpty()) {
+                    Toast.makeText(AggiuntaPiattiActivity.this, "Inserisci il nome del piatto", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                String nomePiattoNew = nomeInput;
+                nomePiattoNew = nomePiattoNew.toLowerCase();
+                if (!nomePiattoNew.isEmpty()) {
+                    nomePiattoNew = nomePiattoNew.substring(0, 1).toUpperCase() + nomePiattoNew.substring(1);
+                }
+
+                String spinnerPortataValue = (spinnerPortata != null && spinnerPortata.getSelectedItem() != null) ? spinnerPortata.getSelectedItem().toString() : "";
+                if (spinnerPortataValue.equalsIgnoreCase("Che portata è?")) {
+                    Toast.makeText(AggiuntaPiattiActivity.this, "inserirsci che tipo di portata è", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                String spinnerNutrientiValue = (spinnerNutrienti != null && spinnerNutrienti.getSelectedItem() != null) ? spinnerNutrienti.getSelectedItem().toString() : "";
+                if (spinnerNutrientiValue.equalsIgnoreCase("Che nutrienti contiene?")) {
+                    Toast.makeText(AggiuntaPiattiActivity.this, "inserirsci che nutrienti ci sono", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (editingId >= 0) {
+                    if (repo.existsByNameAndPortata(nomePiattoNew, spinnerPortataValue, editingId)) {
+                        Toast.makeText(AggiuntaPiattiActivity.this, "Esiste già un piatto con questo nome e portata", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    String nomePiattoNew = nomeInput;
-                    nomePiattoNew = nomePiattoNew.toLowerCase();
-                    if (nomePiattoNew.length() >= 1) {
-                        nomePiattoNew = nomePiattoNew.substring(0,1).toUpperCase() + nomePiattoNew.substring(1);
-                    }
-
-                    String spinnerPortataValue = (spinnerPortata != null && spinnerPortata.getSelectedItem() != null) ? spinnerPortata.getSelectedItem().toString() : "";
-                    if (spinnerPortataValue.equalsIgnoreCase("Che portata è?")) {
-                        Toast.makeText(AggiuntaPiattiActivity.this, "inserirsci che tipo di portata è", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    String portataNew = spinnerPortataValue;
-
-                    String spinnerNutrientiValue = (spinnerNutrienti != null && spinnerNutrienti.getSelectedItem() != null) ? spinnerNutrienti.getSelectedItem().toString() : "";
-                    if (spinnerNutrientiValue.equalsIgnoreCase("Che nutrienti contiene?")){
-                        Toast.makeText(AggiuntaPiattiActivity.this, "inserirsci che nutrienti ci sono", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    String nutrientiNew = spinnerNutrientiValue;
-
-                    if (editingId >= 0) {
-                        if (repo.existsByNameAndPortata(nomePiattoNew, portataNew, editingId)) {
-                            Toast.makeText(AggiuntaPiattiActivity.this, "Esiste già un piatto con questo nome e portata", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        Piatto p = new Piatto(editingId, nomePiattoNew, portataNew, nutrientiNew, Boolean.TRUE);
-                        boolean ok = repo.updateOne(p);
-                        if (ok) {
-                            Toast.makeText(AggiuntaPiattiActivity.this, "Piatto aggiornato", Toast.LENGTH_SHORT).show();
-                            setResult(RESULT_OK);
-                            finish();
-                        } else {
-                            Toast.makeText(AggiuntaPiattiActivity.this, "Aggiornamento fallito", Toast.LENGTH_SHORT).show();
-                        }
-
+                    Piatto p = new Piatto(editingId, nomePiattoNew, spinnerPortataValue, spinnerNutrientiValue, Boolean.TRUE);
+                    boolean ok = repo.updateOne(p);
+                    if (ok) {
+                        Toast.makeText(AggiuntaPiattiActivity.this, "Piatto aggiornato", Toast.LENGTH_SHORT).show();
+                        setResult(RESULT_OK);
+                        finish();
                     } else {
-                        if (repo.existsByNameAndPortata(nomePiattoNew, portataNew, -1)) {
-                            Toast.makeText(AggiuntaPiattiActivity.this, "Esiste già un piatto con questo nome e portata", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        Piatto piatto = new Piatto(-1, nomePiattoNew, portataNew, nutrientiNew, Boolean.TRUE);
-                        boolean success = repo.addOne(piatto);
+                        Toast.makeText(AggiuntaPiattiActivity.this, "Aggiornamento fallito", Toast.LENGTH_SHORT).show();
+                    }
 
-                        if (success){
-                            Toast.makeText(AggiuntaPiattiActivity.this, "Piatto inserito con successo!", Toast.LENGTH_SHORT).show();
-                            finish();
-                        }
-                        else {
-                            Toast.makeText(AggiuntaPiattiActivity.this, "Ops! Qualcosa è andato storto...", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (repo.existsByNameAndPortata(nomePiattoNew, spinnerPortataValue, -1)) {
+                        Toast.makeText(AggiuntaPiattiActivity.this, "Esiste già un piatto con questo nome e portata", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    Piatto piatto = new Piatto(-1, nomePiattoNew, spinnerPortataValue, spinnerNutrientiValue, Boolean.TRUE);
+                    boolean success = repo.addOne(piatto);
 
-                        }
+                    if (success) {
+                        Toast.makeText(AggiuntaPiattiActivity.this, "Piatto inserito con successo!", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(AggiuntaPiattiActivity.this, "Ops! Qualcosa è andato storto...", Toast.LENGTH_SHORT).show();
+
                     }
                 }
             });
@@ -132,15 +125,11 @@ public class AggiuntaPiattiActivity extends AppCompatActivity {
     }
 
     private void BackHomeActivity() {
-        ImageButton homeBtn = (ImageButton)findViewById(R.id.homeBtn);
+        ImageButton homeBtn = findViewById(R.id.homeBtn);
         if (homeBtn != null) {
-            homeBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v)
-                {
-                    Intent backHome = new Intent(AggiuntaPiattiActivity.this, MainActivity.class);
-                    startActivity(backHome);
-                }
+            homeBtn.setOnClickListener(v -> {
+                Intent backHome = new Intent(AggiuntaPiattiActivity.this, MainActivity.class);
+                startActivity(backHome);
             });
         }
     }

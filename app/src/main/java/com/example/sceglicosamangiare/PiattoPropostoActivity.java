@@ -8,7 +8,6 @@ import java.util.Random;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -17,7 +16,6 @@ public class PiattoPropostoActivity extends AppCompatActivity {
     private PiattoRepository repo;
     private ArrayList<Piatto> listaPiatti;
     private String proteinaScelta;
-    private Random randomGenerator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,15 +31,11 @@ public class PiattoPropostoActivity extends AppCompatActivity {
     }
 
     private void refreshActivity() {
-        ImageButton refreshBtn = (ImageButton)findViewById(R.id.refreshBtn);
+        ImageButton refreshBtn = findViewById(R.id.refreshBtn);
         if (refreshBtn != null) {
-            refreshBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v)
-                {
-                    sceltaCasualeProteina();
-                    sceltaCasualePiatto();
-                }
+            refreshBtn.setOnClickListener(v -> {
+                sceltaCasualeProteina();
+                sceltaCasualePiatto();
             });
         }
     }
@@ -49,7 +43,7 @@ public class PiattoPropostoActivity extends AppCompatActivity {
 
     public void importaDatabase() {
 
-        listaPiatti = new ArrayList<Piatto>();
+        listaPiatti = new ArrayList<>();
         repo = new PiattoRepository(PiattoPropostoActivity.this);
         listaPiatti = repo.getAllData();
 
@@ -62,7 +56,7 @@ public class PiattoPropostoActivity extends AppCompatActivity {
         itemDrops.addEntry("Carne Bianca",   20.0);
         itemDrops.addEntry("Pesce",  45.0);
         itemDrops.addEntry("Altro",   20.0);
-        proteinaScelta = itemDrops.getProteina() + "";
+        proteinaScelta = itemDrops.getProteina();
 
     }
 
@@ -70,7 +64,7 @@ public class PiattoPropostoActivity extends AppCompatActivity {
 
         //filtrare lista piatti rispetto alla proteina scelta
 
-        ArrayList<Piatto> piattiFiltratiPerProteina = new ArrayList<Piatto>();
+        ArrayList<Piatto> piattiFiltratiPerProteina = new ArrayList<>();
         if (proteinaScelta == null) proteinaScelta = "";
         String proteinaLower = proteinaScelta.toLowerCase();
 
@@ -84,16 +78,16 @@ public class PiattoPropostoActivity extends AppCompatActivity {
             }
         }
 
-        TextView nomeDelPiattoCasualeTV = (TextView) findViewById(R.id.nomeDelPiattoCasualeTV);
+        TextView nomeDelPiattoCasualeTV = findViewById(R.id.nomeDelPiattoCasualeTV);
 
         if (piattiFiltratiPerProteina.isEmpty()) {
             // If no match on nutrienti, fall back to any available dish (prefer personal/base merged list)
             if (listaPiatti == null || listaPiatti.isEmpty()) {
-                if (nomeDelPiattoCasualeTV != null) nomeDelPiattoCasualeTV.setText("Nessun piatto trovato");
+                if (nomeDelPiattoCasualeTV != null) nomeDelPiattoCasualeTV.setText(R.string.nessun_piatto_trovato);
                 return;
             }
             // pick random from full list and inform user
-            randomGenerator = new Random();
+            Random randomGenerator = new Random();
             int idx = randomGenerator.nextInt(listaPiatti.size());
             Piatto fallback = listaPiatti.get(idx);
             if (nomeDelPiattoCasualeTV != null && fallback != null && fallback.getNomePiatto() != null) {
@@ -103,7 +97,7 @@ public class PiattoPropostoActivity extends AppCompatActivity {
             return;
         }
 
-        randomGenerator = new Random();
+        Random randomGenerator = new Random();
         int index = randomGenerator.nextInt(piattiFiltratiPerProteina.size());
         Piatto piattoScelto = piattiFiltratiPerProteina.get(index);
 
@@ -114,15 +108,11 @@ public class PiattoPropostoActivity extends AppCompatActivity {
     }
 
     private void backHomeActivity() {
-        ImageButton homeBtn = (ImageButton)findViewById(R.id.homeBtn);
+        ImageButton homeBtn = findViewById(R.id.homeBtn);
         if (homeBtn != null) {
-            homeBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v)
-                {
-                    Intent backHome = new Intent(PiattoPropostoActivity.this, MainActivity.class);
-                    startActivity(backHome);
-                }
+            homeBtn.setOnClickListener(v -> {
+                Intent backHome = new Intent(PiattoPropostoActivity.this, MainActivity.class);
+                startActivity(backHome);
             });
         }
     }

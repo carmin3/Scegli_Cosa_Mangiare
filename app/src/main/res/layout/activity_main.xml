@@ -20,6 +20,7 @@
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:background="@null"
+            android:contentDescription="@string/settings_description"
             android:src="@android:drawable/ic_menu_preferences"
             app:tint="@color/Verde_scuro" />
 
@@ -43,7 +44,7 @@
             android:id="@+id/ProponiPiattoBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Proponimi un piatto!"
+            android:text="@string/proponimi_un_piatto"
             android:textSize="24sp"
             app:backgroundTint="@color/Verde_scuro"
             app:cornerRadius="10dp"
@@ -58,6 +59,7 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:background="@color/Verde_BG"
+            android:contentDescription="@string/lista_piatti_description"
             android:scaleX="2"
             android:scaleY="2"
             android:src="@drawable/list_icon"

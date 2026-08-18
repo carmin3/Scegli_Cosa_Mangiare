@@ -135,8 +135,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         String nutrienti = (nutrientiIdx != -1) ? c.getString(nutrientiIdx) : "";
         boolean personale = (persIdx != -1) && c.getInt(persIdx) == 1;
         boolean favorito = (favIdx != -1) && c.getInt(favIdx) == 1;
-        Integer baseId = null;
-        if (baseIdx != -1 && !c.isNull(baseIdx)) baseId = c.getInt(baseIdx);
+        Integer baseId = (baseIdx != -1 && !c.isNull(baseIdx)) ? c.getInt(baseIdx) : null;
         boolean tombstone = (tombIdx != -1) && c.getInt(tombIdx) == 1;
 
         return new Piatto(id, nome, portata, nutrienti, personale, favorito, baseId, tombstone);
