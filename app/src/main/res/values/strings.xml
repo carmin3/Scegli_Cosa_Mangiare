@@ -26,4 +26,10 @@
     <string name="lista_piatti_description">Lista piatti</string>
     <string name="home_description">Torna alla home</string>
     <string name="nessun_piatto_trovato">Nessun piatto trovato</string>
+    <string name="label_primo">PRIMO</string>
+    <string name="label_secondo">SECONDO</string>
+    <string name="label_piatto_unico">PIATTO UNICO</string>
+    <string name="label_contorno">CONTORNO</string>
+    <string name="label_proteina_scelta">PROTEINA: %1$s</string>
+    <string name="nessun_piatto_per_proteina">Nessun piatto trovato per questa proteina</string>
 </resources>

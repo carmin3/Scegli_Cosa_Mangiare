@@ -9,7 +9,6 @@ import java.util.Random;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 public class PiattoPropostoActivity extends AppCompatActivity {
 
@@ -61,50 +60,62 @@ public class PiattoPropostoActivity extends AppCompatActivity {
     }
 
     private void sceltaCasualePiatto() {
+        TextView proteinaSceltaTV = findViewById(R.id.proteinaSceltaTV);
+        if (proteinaSceltaTV != null) {
+            proteinaSceltaTV.setText(getString(R.string.label_proteina_scelta, proteinaScelta));
+        }
 
-        //filtrare lista piatti rispetto alla proteina scelta
-
-        ArrayList<Piatto> piattiFiltratiPerProteina = new ArrayList<>();
+        // Filtra piatti per proteina
+        ArrayList<Piatto> piattiConProteina = new ArrayList<>();
         if (proteinaScelta == null) proteinaScelta = "";
         String proteinaLower = proteinaScelta.toLowerCase();
 
         if (listaPiatti != null) {
-            for(Piatto piatto: listaPiatti)
-            {
-                if (piatto != null && piatto.getNutrienti() != null && piatto.getNutrienti().toLowerCase().contains(proteinaLower))
-                {
-                    piattiFiltratiPerProteina.add(piatto);
+            for (Piatto p : listaPiatti) {
+                if (p != null && p.getNutrienti() != null && p.getNutrienti().toLowerCase().contains(proteinaLower)) {
+                    piattiConProteina.add(p);
                 }
             }
         }
 
-        TextView nomeDelPiattoCasualeTV = findViewById(R.id.nomeDelPiattoCasualeTV);
+        // Seleziona Primo, Secondo, Piatto Unico con proteina
+        Piatto primo = pickRandomByPortata(piattiConProteina, "Primo");
+        Piatto secondo = pickRandomByPortata(piattiConProteina, "Secondo");
+        Piatto piattoUnico = pickRandomByPortata(piattiConProteina, "Piatto Unico");
 
-        if (piattiFiltratiPerProteina.isEmpty()) {
-            // If no match on nutrienti, fall back to any available dish (prefer personal/base merged list)
-            if (listaPiatti == null || listaPiatti.isEmpty()) {
-                if (nomeDelPiattoCasualeTV != null) nomeDelPiattoCasualeTV.setText(R.string.nessun_piatto_trovato);
-                return;
+        // Seleziona Contorno senza vincolo proteina
+        Piatto contorno = pickRandomByPortata(listaPiatti, "Contorno");
+
+        // Aggiorna UI
+        updateDishUI(R.id.primoPropostoTV, primo);
+        updateDishUI(R.id.secondoPropostoTV, secondo);
+        updateDishUI(R.id.piattoUnicoPropostoTV, piattoUnico);
+        updateDishUI(R.id.contornoPropostoTV, contorno);
+    }
+
+    private Piatto pickRandomByPortata(ArrayList<Piatto> source, String portata) {
+        if (source == null) return null;
+        ArrayList<Piatto> filtered = new ArrayList<>();
+        for (Piatto p : source) {
+            if (p.getPortata() != null && p.getPortata().equalsIgnoreCase(portata)) {
+                filtered.add(p);
             }
-            // pick random from full list and inform user
-            Random randomGenerator = new Random();
-            int idx = randomGenerator.nextInt(listaPiatti.size());
-            Piatto fallback = listaPiatti.get(idx);
-            if (nomeDelPiattoCasualeTV != null && fallback != null && fallback.getNomePiatto() != null) {
-                nomeDelPiattoCasualeTV.setText(fallback.getNomePiatto());
+        }
+        if (filtered.isEmpty()) return null;
+        return filtered.get(new Random().nextInt(filtered.size()));
+    }
+
+    private void updateDishUI(int viewId, Piatto piatto) {
+        TextView tv = findViewById(viewId);
+        if (tv != null) {
+            if (piatto != null) {
+                tv.setText(piatto.getNomePiatto());
+                tv.setAlpha(1.0f);
+            } else {
+                tv.setText(R.string.nessun_piatto_per_proteina);
+                tv.setAlpha(0.5f);
             }
-            Toast.makeText(this, "Nessun piatto corrisponde alla proteina '" + proteinaScelta + "' — mostro un piatto casuale.", Toast.LENGTH_SHORT).show();
-            return;
         }
-
-        Random randomGenerator = new Random();
-        int index = randomGenerator.nextInt(piattiFiltratiPerProteina.size());
-        Piatto piattoScelto = piattiFiltratiPerProteina.get(index);
-
-        if (nomeDelPiattoCasualeTV != null && piattoScelto != null && piattoScelto.getNomePiatto() != null) {
-            nomeDelPiattoCasualeTV.setText(piattoScelto.getNomePiatto());
-        }
-
     }
 
     private void backHomeActivity() {
