@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AlertDialog;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -38,9 +39,21 @@ public class PiattoDetailActivity extends AppCompatActivity {
 
         Button btnModifica = findViewById(R.id.btnModifica);
         Button btnElimina = findViewById(R.id.btnElimina);
+        Button btnRicetta = findViewById(R.id.btnRicetta);
         btnTogglePreferito = findViewById(R.id.btn_toggle_preferito);
 
         loadPiatto();
+
+        if (btnRicetta != null) {
+            btnRicetta.setOnClickListener(v -> {
+                if (current != null && current.getNomePiatto() != null) {
+                    String query = "ricetta " + current.getNomePiatto();
+                    String url = "https://www.google.com/search?q=" + Uri.encode(query) + "&btnI=1";
+                    Intent intentRicetta = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    startActivity(intentRicetta);
+                }
+            });
+        }
 
         if (btnModifica != null) {
             btnModifica.setOnClickListener(v -> {

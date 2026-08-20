@@ -96,6 +96,7 @@
             android:text="Nutrienti"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/detailPortata"
             app:layout_constraintTop_toBottomOf="@id/detailPortata"
             app:layout_constraintVertical_bias="0.0" />
@@ -105,16 +106,31 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_green_button"
-            android:text="AGGIUNGI AI PREFERITI"
+            android:text="@string/aggiungi_ai_preferiti"
             android:textAllCaps="true"
             android:textColor="@color/white"
             app:icon="@drawable/ic_star_outline"
             app:iconPadding="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/detailNutrienti"
+            app:layout_constraintEnd_toStartOf="@+id/btnRicetta"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/detailNutrienti"
             app:layout_constraintVertical_bias="0.1" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRicetta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_green_button"
+            android:text="@string/ricetta"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_toggle_preferito"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btn_toggle_preferito"
+            app:layout_constraintTop_toTopOf="@+id/btn_toggle_preferito" />
 
         <Button
             android:id="@+id/btnModifica"

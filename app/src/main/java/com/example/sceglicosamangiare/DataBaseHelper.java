@@ -33,7 +33,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_TOMBSTONE = "TOMBSTONE";
 
     public DataBaseHelper(@Nullable Context context) {
-        super(context, "personal.DB", null, 2);
+        super(context, "personal.DB", null, 3);
     }
 
     @Override
