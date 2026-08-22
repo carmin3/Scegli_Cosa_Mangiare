@@ -43,13 +43,13 @@ public class PiattoDetailActivity extends AppCompatActivity {
 
         Button btnModifica = findViewById(R.id.btnModifica);
         Button btnElimina = findViewById(R.id.btnElimina);
-        Button btnRicetta = findViewById(R.id.btnRicetta);
+        Button btn_ricetta = findViewById(R.id.btn_ricetta);
         btnTogglePreferito = findViewById(R.id.btn_toggle_preferito);
 
         loadPiatto();
 
-        if (btnRicetta != null) {
-            btnRicetta.setOnClickListener(v -> {
+        if (btn_ricetta != null) {
+            btn_ricetta.setOnClickListener(v -> {
                 if (current != null && current.getNomePiatto() != null) {
                     SharedPreferences prefs = getSharedPreferences("ScegliCosaMangiarePrefs", MODE_PRIVATE);
                     boolean showWarning = prefs.getBoolean(PREF_SHOW_RICETTA_WARNING, true);

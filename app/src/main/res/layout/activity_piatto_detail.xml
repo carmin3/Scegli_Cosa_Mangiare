@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/Verde_BG"
     android:orientation="vertical"
-    tools:context="PiattoPropostoActivity">
+    tools:context=".PiattoDetailActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -123,7 +123,7 @@
             app:layout_constraintVertical_bias="0.100000024" />
 
         <Button
-            android:id="@+id/btnRicetta"
+            android:id="@+id/btn_ricetta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/Verde_scuro"

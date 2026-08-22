@@ -91,20 +91,35 @@
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/primoPropostoTV"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/rounded_corner_bg"
-                android:elevation="2dp"
-                android:gravity="center"
-                android:padding="12dp"
-                android:text="---"
-                android:textAllCaps="true"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:id="@+id/primoPropostoTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/refreshPrimoBtn"
+                    android:gravity="start"
+                    android:text="Primo"
+                    android:textColor="@color/black"
+                    android:textSize="26sp"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/refreshPrimoBtn"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@null"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/refresh"
+                    android:scaleX="0.7"
+                    android:scaleY="0.7"
+                    app:tint="@color/Verde_scuro" />
+            </RelativeLayout>
 
             <!-- Secondo -->
             <TextView
@@ -115,44 +130,35 @@
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/secondoPropostoTV"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/rounded_corner_bg"
-                android:elevation="2dp"
-                android:gravity="center"
-                android:padding="12dp"
-                android:text="---"
-                android:textAllCaps="true"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:layout_marginBottom="16dp">
 
-            <!-- Piatto Unico -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/label_piatto_unico"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/secondoPropostoTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/refreshSecondoBtn"
+                    android:gravity="start"
+                    android:text="Secondo"
+                    android:textColor="@color/black"
+                    android:textSize="26sp"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/piattoUnicoPropostoTV"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/rounded_corner_bg"
-                android:elevation="2dp"
-                android:gravity="center"
-                android:padding="12dp"
-                android:text="---"
-                android:textAllCaps="true"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                <ImageButton
+                    android:id="@+id/refreshSecondoBtn"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@null"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/refresh"
+                    android:scaleX="0.7"
+                    android:scaleY="0.7"
+                    app:tint="@color/Verde_scuro" />
+            </RelativeLayout>
 
             <!-- Contorno -->
             <TextView
@@ -163,20 +169,115 @@
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/contornoPropostoTV"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:id="@+id/contornoPropostoTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/refreshContornoBtn"
+                    android:gravity="start"
+                    android:text="Contorno"
+                    android:textColor="@color/black"
+                    android:textSize="26sp"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/refreshContornoBtn"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@null"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/refresh"
+                    android:scaleX="0.7"
+                    android:scaleY="0.7"
+                    app:tint="@color/Verde_scuro" />
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="8dp"
+                android:gravity="center"
+                android:text="Oppure..."
+                android:textColor="@color/Verde_scuro"
+                android:textSize="18sp"
+                android:textStyle="italic|bold" />
+
+            <!-- Piatto Unico -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_piatto_unico"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:id="@+id/piattoUnicoPropostoTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/refreshPiattoUnicoBtn"
+                    android:gravity="start"
+                    android:text="Piatto Unico"
+                    android:textColor="@color/black"
+                    android:textSize="26sp"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/refreshPiattoUnicoBtn"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@null"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/refresh"
+                    android:scaleX="0.7"
+                    android:scaleY="0.7"
+                    app:tint="@color/Verde_scuro" />
+            </RelativeLayout>
+
+            <!-- Sezione Scelta Ingrediente -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="Cosa usiamo come ingrediente principale?"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/proteinaSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/rounded_corner_bg"
-                android:elevation="2dp"
-                android:gravity="center"
-                android:padding="12dp"
-                android:text="---"
-                android:textAllCaps="true"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:padding="8dp"
+                android:spinnerMode="dropdown" />
+
+            <Button
+                android:id="@+id/btnRicreaMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                android:backgroundTint="@color/Verde_scuro"
+                android:text="Ricrea il menù"
+                android:textColor="@color/white"
+                android:visibility="gone" />
 
         </LinearLayout>
     </ScrollView>
