@@ -59,18 +59,8 @@
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="5dp" />
+        android:layout_height="30dp" />
 
-    <TextView
-        android:id="@+id/proteinaSceltaTV"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="8dp"
-        android:text="PROTEINA: ..."
-        android:textColor="@color/Verde_scuro"
-        android:textSize="18sp"
-        android:textStyle="bold" />
 
     <ScrollView
         android:layout_width="match_parent"

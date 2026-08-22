@@ -26,6 +26,11 @@ public class PiattoPropostoActivity extends AppCompatActivity {
     private Spinner proteinaSpinner;
     private final List<String> opzioniProteina = Arrays.asList("Carne Bianca", "Pesce", "Carne Rossa", "Altro");
 
+    private Piatto currentPrimo;
+    private Piatto currentSecondo;
+    private Piatto currentContorno;
+    private Piatto currentPiattoUnico;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +97,12 @@ public class PiattoPropostoActivity extends AppCompatActivity {
         findViewById(R.id.refreshSecondoBtn).setOnClickListener(v -> refreshSingleDish(R.id.secondoPropostoTV, "Secondo"));
         findViewById(R.id.refreshContornoBtn).setOnClickListener(v -> refreshSingleDish(R.id.contornoPropostoTV, "Contorno"));
         findViewById(R.id.refreshPiattoUnicoBtn).setOnClickListener(v -> refreshSingleDish(R.id.piattoUnicoPropostoTV, "Piatto Unico"));
+
+        // Click listeners per i nomi dei piatti
+        findViewById(R.id.primoPropostoTV).setOnClickListener(v -> openDetail(currentPrimo));
+        findViewById(R.id.secondoPropostoTV).setOnClickListener(v -> openDetail(currentSecondo));
+        findViewById(R.id.contornoPropostoTV).setOnClickListener(v -> openDetail(currentContorno));
+        findViewById(R.id.piattoUnicoPropostoTV).setOnClickListener(v -> openDetail(currentPiattoUnico));
     }
 
     private void refreshSingleDish(int viewId, String portata) {
@@ -115,11 +126,6 @@ public class PiattoPropostoActivity extends AppCompatActivity {
     }
 
     private void refreshAllDishes(String proteina) {
-        TextView proteinaSceltaTV = findViewById(R.id.proteinaSceltaTV);
-        if (proteinaSceltaTV != null) {
-            proteinaSceltaTV.setText(getString(R.string.label_proteina_scelta, proteina));
-        }
-
         ArrayList<Piatto> piattiConProteina = filtraPerProteina(proteina);
 
         updateDishUI(R.id.primoPropostoTV, pickRandomByPortata(piattiConProteina, "Primo"));
@@ -154,13 +160,28 @@ public class PiattoPropostoActivity extends AppCompatActivity {
     private void updateDishUI(int viewId, Piatto piatto) {
         TextView tv = findViewById(viewId);
         if (tv != null) {
+            if (viewId == R.id.primoPropostoTV) currentPrimo = piatto;
+            else if (viewId == R.id.secondoPropostoTV) currentSecondo = piatto;
+            else if (viewId == R.id.contornoPropostoTV) currentContorno = piatto;
+            else if (viewId == R.id.piattoUnicoPropostoTV) currentPiattoUnico = piatto;
+
             if (piatto != null) {
                 tv.setText(piatto.getNomePiatto());
                 tv.setAlpha(1.0f);
+                tv.setClickable(true);
             } else {
                 tv.setText(R.string.nessun_piatto_per_proteina);
                 tv.setAlpha(0.5f);
+                tv.setClickable(false);
             }
+        }
+    }
+
+    private void openDetail(Piatto piatto) {
+        if (piatto != null) {
+            Intent intent = new Intent(this, PiattoDetailActivity.class);
+            intent.putExtra(PiattoDetailActivity.EXTRA_PIATTO_ID, piatto.getId());
+            startActivity(intent);
         }
     }
 
