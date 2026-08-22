@@ -33,4 +33,8 @@
     <string name="label_contorno">CONTORNO</string>
     <string name="label_proteina_scelta">PROTEINA: %1$s</string>
     <string name="nessun_piatto_per_proteina">Nessun piatto trovato per questa proteina</string>
+    <string name="ricetta_warning_message">Stai per aprire la ricetta nel tuo browser preferito. Se ti viene segnalato che stai per essere reindirizzato verso un\'altra pagina è tutto normale. segui il link e goditi la ricetta :)</string>
+    <string name="dont_show_again">non mostrare più</string>
+    <string name="ok_capito">Ok, Capito</string>
+    <string name="annulla">Annulla</string>
 </resources>

@@ -59,104 +59,105 @@
         android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/Verde_BG">
+        android:background="@color/Verde_BG"
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/detailNome"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="start"
-            android:maxLines="1"
+            android:gravity="center"
             android:text="Nome Piatto"
-            android:textSize="24sp"
-            app:layout_constraintBottom_toTopOf="@id/detailPortata"
+            android:textColor="@color/black"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/detailPortata"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintVertical_bias="0.15000003" />
 
         <TextView
             android:id="@+id/detailPortata"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="start"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_pill"
+            android:gravity="center"
             android:text="Portata"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.1"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.2" />
+            android:textColor="@color/Verde_scuro"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/detailNutrienti"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/detailNome" />
 
         <TextView
             android:id="@+id/detailNutrienti"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="start"
-            android:text="Nutrienti"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/detailPortata"
-            app:layout_constraintTop_toBottomOf="@id/detailPortata"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_toggle_preferito"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_green_button"
-            android:text="@string/aggiungi_ai_preferiti"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            app:icon="@drawable/ic_star_outline"
-            app:iconPadding="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btnRicetta"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/detailNutrienti"
-            app:layout_constraintVertical_bias="0.1" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnRicetta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:background="@drawable/bg_green_button"
-            android:text="@string/ricetta"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toBottomOf="@+id/btn_toggle_preferito"
+            android:background="@drawable/bg_pill"
+            android:gravity="center"
+            android:text="Nutrienti"
+            android:textColor="@color/Verde_scuro"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/detailPortata"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/btn_toggle_preferito"
-            app:layout_constraintTop_toTopOf="@+id/btn_toggle_preferito" />
+            app:layout_constraintStart_toEndOf="@+id/detailPortata"
+            app:layout_constraintTop_toTopOf="@+id/detailPortata" />
+
+        <Button
+            android:id="@+id/btn_toggle_preferito"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/Oro"
+            android:text="@string/aggiungi_ai_preferiti"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/detailNutrienti"
+            app:layout_constraintVertical_bias="0.100000024" />
+
+        <Button
+            android:id="@+id/btnRicetta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/Verde_scuro"
+            android:text="@string/ricetta"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_toggle_preferito"
+            app:layout_constraintVertical_bias="0.0" />
 
         <Button
             android:id="@+id/btnModifica"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
             android:backgroundTint="@color/Giallo"
             android:text="Modifica"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.25"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.9" />
+            app:layout_constraintEnd_toStartOf="@+id/btnElimina"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Button
             android:id="@+id/btnElimina"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:backgroundTint="@color/Rosso"
             android:text="Elimina"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.75"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.9" />
+            app:layout_constraintBottom_toBottomOf="@+id/btnModifica"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btnModifica"
+            app:layout_constraintTop_toTopOf="@+id/btnModifica" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

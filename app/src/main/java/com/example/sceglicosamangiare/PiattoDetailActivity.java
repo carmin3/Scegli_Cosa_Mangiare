@@ -4,10 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AlertDialog;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,6 +22,7 @@ public class PiattoDetailActivity extends AppCompatActivity {
     private Piatto current;
     private int piattoId = -1;
     private static final int REQUEST_EDIT_PIATTO = 101;
+    private static final String PREF_SHOW_RICETTA_WARNING = "show_ricetta_warning";
     private Button btnTogglePreferito;
 
     @Override
@@ -47,10 +51,27 @@ public class PiattoDetailActivity extends AppCompatActivity {
         if (btnRicetta != null) {
             btnRicetta.setOnClickListener(v -> {
                 if (current != null && current.getNomePiatto() != null) {
-                    String query = "ricetta " + current.getNomePiatto();
-                    String url = "https://www.google.com/search?q=" + Uri.encode(query) + "&btnI=1";
-                    Intent intentRicetta = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                    startActivity(intentRicetta);
+                    SharedPreferences prefs = getSharedPreferences("ScegliCosaMangiarePrefs", MODE_PRIVATE);
+                    boolean showWarning = prefs.getBoolean(PREF_SHOW_RICETTA_WARNING, true);
+
+                    if (showWarning) {
+                        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_ricetta_warning, null);
+                        CheckBox checkBox = dialogView.findViewById(R.id.checkbox_dont_show_again);
+
+                        new AlertDialog.Builder(this)
+                                .setTitle("Avviso")
+                                .setView(dialogView)
+                                .setPositiveButton(R.string.ok_capito, (dialog, which) -> {
+                                    if (checkBox.isChecked()) {
+                                        prefs.edit().putBoolean(PREF_SHOW_RICETTA_WARNING, false).apply();
+                                    }
+                                    openRicetta();
+                                })
+                                .setNegativeButton(R.string.annulla, null)
+                                .show();
+                    } else {
+                        openRicetta();
+                    }
                 }
             });
         }
@@ -115,6 +136,15 @@ public class PiattoDetailActivity extends AppCompatActivity {
                 Intent backHome = new Intent(PiattoDetailActivity.this, MainActivity.class);
                 startActivity(backHome);
             });
+        }
+    }
+
+    private void openRicetta() {
+        if (current != null && current.getNomePiatto() != null) {
+            String query = "ricetta " + current.getNomePiatto();
+            String url = "https://www.google.com/search?q=" + Uri.encode(query) + "&btnI=1";
+            Intent intentRicetta = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(intentRicetta);
         }
     }
 
