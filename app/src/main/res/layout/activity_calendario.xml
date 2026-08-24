@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/Verde_BG"
+    android:orientation="vertical"
+    tools:context=".CalendarioActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp">
+
+        <ImageButton
+            android:id="@+id/homeBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:background="@null"
+            android:scaleX="0.8"
+            android:scaleY="0.8"
+            android:src="@drawable/home_icon"
+            app:tint="@color/Verde_scuro" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Calendario"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/editDateTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Lunedì 24 Agosto"
+                android:textColor="@color/Verde_scuro"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="PRANZO"
+                android:textColor="@color/Verde_scuro"
+                android:textStyle="bold"
+                android:textSize="16sp"/>
+
+            <Spinner
+                android:id="@+id/spinnerProtPranzo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/rounded_corner_bg"
+                android:padding="8dp"/>
+
+            <!-- Pranzo Rows -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+                <EditText
+                    android:id="@+id/etPranzoPrimo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Primo"
+                    android:inputType="textCapSentences" />
+                <ImageButton
+                    android:id="@+id/btnActionPranzoPrimo"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@null"
+                    android:src="@drawable/ic_magic_wand"
+                    app:tint="@color/Verde_scuro" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+                <EditText
+                    android:id="@+id/etPranzoSecondo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Secondo"
+                    android:inputType="textCapSentences" />
+                <ImageButton
+                    android:id="@+id/btnActionPranzoSecondo"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@null"
+                    android:src="@drawable/ic_magic_wand"
+                    app:tint="@color/Verde_scuro" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+                <EditText
+                    android:id="@+id/etPranzoContorno"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Contorno"
+                    android:inputType="textCapSentences" />
+                <ImageButton
+                    android:id="@+id/btnActionPranzoContorno"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@null"
+                    android:src="@drawable/ic_magic_wand"
+                    app:tint="@color/Verde_scuro" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="16dp">
+                <EditText
+                    android:id="@+id/etPranzoPiattoUnico"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Piatto Unico"
+                    android:inputType="textCapSentences" />
+                <ImageButton
+                    android:id="@+id/btnActionPranzoPiattoUnico"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@null"
+                    android:src="@drawable/ic_magic_wand"
+                    app:tint="@color/Verde_scuro" />
+            </LinearLayout>
+
+            <!-- CENA -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="CENA"
+                android:textColor="@color/Verde_scuro"
+                android:textStyle="bold"
+                android:textSize="16sp"/>
+
+            <Spinner
+                android:id="@+id/spinnerProtCena"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/rounded_corner_bg"
+                android:padding="8dp"/>
+
+            <!-- Cena Rows -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+                <EditText
+                    android:id="@+id/etCenaPrimo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Primo"
+                    android:inputType="textCapSentences" />
+                <ImageButton
+                    android:id="@+id/btnActionCenaPrimo"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@null"
+                    android:src="@drawable/ic_magic_wand"
+                    app:tint="@color/Verde_scuro" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+                <EditText
+                    android:id="@+id/etCenaSecondo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Secondo"
+                    android:inputType="textCapSentences" />
+                <ImageButton
+                    android:id="@+id/btnActionCenaSecondo"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@null"
+                    android:src="@drawable/ic_magic_wand"
+                    app:tint="@color/Verde_scuro" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+                <EditText
+                    android:id="@+id/etCenaContorno"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Contorno"
+                    android:inputType="textCapSentences" />
+                <ImageButton
+                    android:id="@+id/btnActionCenaContorno"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@null"
+                    android:src="@drawable/ic_magic_wand"
+                    app:tint="@color/Verde_scuro" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="24dp">
+                <EditText
+                    android:id="@+id/etCenaPiattoUnico"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Piatto Unico"
+                    android:inputType="textCapSentences" />
+                <ImageButton
+                    android:id="@+id/btnActionCenaPiattoUnico"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@null"
+                    android:src="@drawable/ic_magic_wand"
+                    app:tint="@color/Verde_scuro" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnCreaMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Crea un menù!"
+                android:backgroundTint="@color/Verde_scuro"
+                android:textColor="@color/white"
+                android:drawableEnd="@drawable/ic_magic_wand"
+                app:drawableTint="@color/white"
+                android:drawablePadding="8dp"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp"
+                android:layout_marginBottom="8dp"/>
+
+            <Button
+                android:id="@+id/btnSalvaPiano"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Salva"
+                android:backgroundTint="@color/Verde_scuro"
+                android:textColor="@color/white"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

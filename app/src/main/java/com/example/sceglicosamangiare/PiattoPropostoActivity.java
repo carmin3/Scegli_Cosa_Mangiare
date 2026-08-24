@@ -24,7 +24,7 @@ public class PiattoPropostoActivity extends AppCompatActivity {
     private ArrayList<Piatto> listaPiatti;
     private String proteinaScelta;
     private Spinner proteinaSpinner;
-    private final List<String> opzioniProteina = Arrays.asList("Carne Bianca", "Pesce", "Carne Rossa", "Altro");
+    private final List<String> opzioniProteina = Arrays.asList("Casuale", "Carne Bianca", "Pesce", "Carne Rossa", "Altro");
 
     private Piatto currentPrimo;
     private Piatto currentSecondo;
@@ -75,20 +75,15 @@ public class PiattoPropostoActivity extends AppCompatActivity {
     }
 
     private void setupButtons() {
-        // Bottone Refresh in alto a destra: torna al comportamento originale (tutto casuale)
-        ImageButton refreshBtn = findViewById(R.id.refreshBtn);
-        if (refreshBtn != null) {
-            refreshBtn.setOnClickListener(v -> {
-                sceltaCasualeProteina();
-                updateSpinnerSelection();
-                refreshAllDishes(proteinaScelta);
-                refreshBtn.setBackground(null);
-            });
-        }
-
         // Bottone "Ricrea il menù" sotto lo spinner
         findViewById(R.id.btnRicreaMenu).setOnClickListener(v -> {
-            proteinaScelta = proteinaSpinner.getSelectedItem().toString();
+            String selected = proteinaSpinner.getSelectedItem().toString();
+            if (selected.equalsIgnoreCase("Casuale")) {
+                sceltaCasualeProteina();
+                updateSpinnerSelection();
+            } else {
+                proteinaScelta = selected;
+            }
             refreshAllDishes(proteinaScelta);
         });
 
@@ -107,6 +102,9 @@ public class PiattoPropostoActivity extends AppCompatActivity {
 
     private void refreshSingleDish(int viewId, String portata) {
         String proteina = proteinaSpinner.getSelectedItem().toString();
+        if (proteina.equalsIgnoreCase("Casuale")) {
+            proteina = proteinaScelta;
+        }
         ArrayList<Piatto> piattiFiltrati = filtraPerProteina(proteina);
         Piatto nuovoPiatto = pickRandomByPortata(piattiFiltrati, portata);
         updateDishUI(viewId, nuovoPiatto);

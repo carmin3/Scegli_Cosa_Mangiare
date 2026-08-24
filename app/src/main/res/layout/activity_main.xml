@@ -40,6 +40,102 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/calendarCard"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/ProponiPiattoBtn"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHeight_percent="0.4">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:background="@color/white"
+                android:padding="12dp">
+
+                <TextView
+                    android:id="@+id/calendarDateTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Lunedì 24 Agosto"
+                    android:textColor="@color/Verde_scuro"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:paddingBottom="8dp"
+                    android:background="?attr/selectableItemBackground"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/Verde_BG"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:paddingTop="8dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="PRANZO"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:alpha="0.6"/>
+
+                    <TextView
+                        android:id="@+id/pranzoPastiTV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="• Piatto 1\n• Piatto 2"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"/>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/Verde_BG"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:paddingTop="8dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="CENA"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:alpha="0.6"/>
+
+                    <TextView
+                        android:id="@+id/cenaPastiTV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="• Piatto 1"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
         <Button
             android:id="@+id/ProponiPiattoBtn"
             android:layout_width="wrap_content"
@@ -52,7 +148,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.65" />
+            app:layout_constraintVertical_bias="0.75" />
 
         <ImageButton
             android:id="@+id/ListaBtn"

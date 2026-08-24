@@ -32,8 +32,22 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_BASE_ID = "BASE_ID";
     public static final String COLUMN_TOMBSTONE = "TOMBSTONE";
 
+    // Nuova tabella Piano Pasto
+    public static final String PIANO_PASTO_TABLE = "PIANO_PASTO_TABLE";
+    public static final String COLUMN_DATA = "DATA";
+    public static final String COLUMN_PROT_PRANZO = "PROT_PRANZO";
+    public static final String COLUMN_PRANZO_PRIMO = "P1";
+    public static final String COLUMN_PRANZO_SECONDO = "P2";
+    public static final String COLUMN_PRANZO_CONTORNO = "P3";
+    public static final String COLUMN_PRANZO_PIATTO_UNICO = "P4";
+    public static final String COLUMN_PROT_CENA = "PROT_CENA";
+    public static final String COLUMN_CENA_PRIMO = "C1";
+    public static final String COLUMN_CENA_SECONDO = "C2";
+    public static final String COLUMN_CENA_CONTORNO = "C3";
+    public static final String COLUMN_CENA_PIATTO_UNICO = "C4";
+
     public DataBaseHelper(@Nullable Context context) {
-        super(context, "personal.DB", null, 3);
+        super(context, "personal.DB", null, 5);
     }
 
     @Override
@@ -42,8 +56,15 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 + COLUMN_NOME_PIATTO + " TEXT, " + COLUMN_PORTATA_PIATTO + " TEXT, "
                 + COLUMN_NUTRIENTI_PIATTO + " TEXT, " + COLUMN_PERSONALI + " INTEGER DEFAULT 0, " + COLUMN_FAVORITO + " INTEGER DEFAULT 0, "
                 + COLUMN_BASE_ID + " INTEGER, " + COLUMN_TOMBSTONE + " INTEGER DEFAULT 0)";
-
         db.execSQL(createTableStatement);
+
+        String createPianoPastoTable = "CREATE TABLE " + PIANO_PASTO_TABLE + " ("
+                + COLUMN_DATA + " TEXT PRIMARY KEY, "
+                + COLUMN_PROT_PRANZO + " TEXT, "
+                + COLUMN_PRANZO_PRIMO + " TEXT, " + COLUMN_PRANZO_SECONDO + " TEXT, " + COLUMN_PRANZO_CONTORNO + " TEXT, " + COLUMN_PRANZO_PIATTO_UNICO + " TEXT, "
+                + COLUMN_PROT_CENA + " TEXT, "
+                + COLUMN_CENA_PRIMO + " TEXT, " + COLUMN_CENA_SECONDO + " TEXT, " + COLUMN_CENA_CONTORNO + " TEXT, " + COLUMN_CENA_PIATTO_UNICO + " TEXT)";
+        db.execSQL(createPianoPastoTable);
     }
 
     @Override
@@ -59,6 +80,81 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 db.execSQL("ALTER TABLE " + PIATTO_TABLE + " ADD COLUMN " + COLUMN_TOMBSTONE + " INTEGER DEFAULT 0");
             } catch (Exception ignored) {}
         }
+        if (oldVersion < 4) {
+            String createPianoPastoTable = "CREATE TABLE IF NOT EXISTS " + PIANO_PASTO_TABLE + " ("
+                    + COLUMN_DATA + " TEXT PRIMARY KEY, "
+                    + COLUMN_PROT_PRANZO + " TEXT, "
+                    + COLUMN_PRANZO_PRIMO + " TEXT, " + COLUMN_PRANZO_SECONDO + " TEXT, " + COLUMN_PRANZO_CONTORNO + " TEXT, "
+                    + COLUMN_PROT_CENA + " TEXT, "
+                    + COLUMN_CENA_PRIMO + " TEXT, " + COLUMN_CENA_SECONDO + " TEXT, " + COLUMN_CENA_CONTORNO + " TEXT)";
+            db.execSQL(createPianoPastoTable);
+        }
+        if (oldVersion < 5) {
+            try { db.execSQL("ALTER TABLE " + PIANO_PASTO_TABLE + " ADD COLUMN " + COLUMN_PRANZO_PIATTO_UNICO + " TEXT"); } catch (Exception ignored) {}
+            try { db.execSQL("ALTER TABLE " + PIANO_PASTO_TABLE + " ADD COLUMN " + COLUMN_CENA_PIATTO_UNICO + " TEXT"); } catch (Exception ignored) {}
+        }
+    }
+
+    // Metodi per Piano Pasto
+    public void savePianoPasto(PianoPasto piano) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_DATA, piano.getData());
+        cv.put(COLUMN_PROT_PRANZO, piano.getProteinaPranzo());
+        cv.put(COLUMN_PRANZO_PRIMO, piano.getPranzoPrimo());
+        cv.put(COLUMN_PRANZO_SECONDO, piano.getPranzoSecondo());
+        cv.put(COLUMN_PRANZO_CONTORNO, piano.getPranzoContorno());
+        cv.put(COLUMN_PRANZO_PIATTO_UNICO, piano.getPranzoPiattoUnico());
+        cv.put(COLUMN_PROT_CENA, piano.getProteinaCena());
+        cv.put(COLUMN_CENA_PRIMO, piano.getCenaPrimo());
+        cv.put(COLUMN_CENA_SECONDO, piano.getCenaSecondo());
+        cv.put(COLUMN_CENA_CONTORNO, piano.getCenaContorno());
+        cv.put(COLUMN_CENA_PIATTO_UNICO, piano.getCenaPiattoUnico());
+
+        db.insertWithOnConflict(PIANO_PASTO_TABLE, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
+        db.close();
+    }
+
+    public PianoPasto getPianoPastoByDate(String date) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String q = "SELECT * FROM " + PIANO_PASTO_TABLE + " WHERE " + COLUMN_DATA + " = ?";
+        Cursor c = db.rawQuery(q, new String[]{date});
+        PianoPasto piano = null;
+        if (c.moveToFirst()) {
+            int dataIdx = c.getColumnIndex(COLUMN_DATA);
+            int protPIdx = c.getColumnIndex(COLUMN_PROT_PRANZO);
+            int p1Idx = c.getColumnIndex(COLUMN_PRANZO_PRIMO);
+            int p2Idx = c.getColumnIndex(COLUMN_PRANZO_SECONDO);
+            int p3Idx = c.getColumnIndex(COLUMN_PRANZO_CONTORNO);
+            int p4Idx = c.getColumnIndex(COLUMN_PRANZO_PIATTO_UNICO);
+            int protCIdx = c.getColumnIndex(COLUMN_PROT_CENA);
+            int c1Idx = c.getColumnIndex(COLUMN_CENA_PRIMO);
+            int c2Idx = c.getColumnIndex(COLUMN_CENA_SECONDO);
+            int c3Idx = c.getColumnIndex(COLUMN_CENA_CONTORNO);
+            int c4Idx = c.getColumnIndex(COLUMN_CENA_PIATTO_UNICO);
+
+            piano = new PianoPasto(
+                    getStringOrEmpty(c, dataIdx, date),
+                    getStringOrEmpty(c, protPIdx, "Casuale"),
+                    getStringOrEmpty(c, p1Idx, ""),
+                    getStringOrEmpty(c, p2Idx, ""),
+                    getStringOrEmpty(c, p3Idx, ""),
+                    getStringOrEmpty(c, p4Idx, ""),
+                    getStringOrEmpty(c, protCIdx, "Casuale"),
+                    getStringOrEmpty(c, c1Idx, ""),
+                    getStringOrEmpty(c, c2Idx, ""),
+                    getStringOrEmpty(c, c3Idx, ""),
+                    getStringOrEmpty(c, c4Idx, "")
+            );
+        }
+        c.close();
+        db.close();
+        return piano;
+    }
+
+    private String getStringOrEmpty(Cursor c, int idx, String def) {
+        if (idx == -1 || c.isNull(idx)) return def;
+        return c.getString(idx);
     }
 
     // low-level personal DB operations

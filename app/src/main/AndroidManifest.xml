@@ -28,6 +28,9 @@
             android:name=".ImpostazioniActivity"
             android:exported="false" />
         <activity
+            android:name=".CalendarioActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

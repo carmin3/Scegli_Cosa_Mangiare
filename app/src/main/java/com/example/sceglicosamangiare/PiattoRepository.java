@@ -116,4 +116,34 @@ public class PiattoRepository {
         }
         return false;
     }
+
+    public ArrayList<Piatto> searchByName(String query) {
+        String q = query.toLowerCase().trim();
+        ArrayList<Piatto> all = getAllData();
+        ArrayList<Piatto> filtered = new ArrayList<>();
+        for (Piatto p : all) {
+            if (p.getNomePiatto().toLowerCase().contains(q)) {
+                filtered.add(p);
+            }
+        }
+        return filtered;
+    }
+
+    public Piatto pickRandomByPortataAndProteina(String portata, String proteina) {
+        ArrayList<Piatto> all = getAllData();
+        ArrayList<Piatto> filtered = new ArrayList<>();
+        String protLower = proteina.toLowerCase().trim();
+        boolean filterProt = !protLower.equals("casuale");
+
+        for (Piatto p : all) {
+            if (p.getPortata() != null && p.getPortata().equalsIgnoreCase(portata)) {
+                if (!filterProt || (p.getNutrienti() != null && p.getNutrienti().toLowerCase().contains(protLower))) {
+                    filtered.add(p);
+                }
+            }
+        }
+
+        if (filtered.isEmpty()) return null;
+        return filtered.get(new java.util.Random().nextInt(filtered.size()));
+    }
 }
