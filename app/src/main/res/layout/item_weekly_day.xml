@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/weeklyDayCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="25dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/weeklyDateTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Lunedì 24 Agosto"
+            android:textColor="@color/Verde_scuro"
+            android:textStyle="bold"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/weeklySummaryTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pasti non impostati"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:layout_marginTop="4dp" />
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

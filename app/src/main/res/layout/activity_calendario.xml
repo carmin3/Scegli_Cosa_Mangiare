@@ -35,11 +35,28 @@
             android:textSize="24sp"
             android:textStyle="bold" />
 
+        <ImageButton
+            android:id="@+id/viewSwitchBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@null"
+            android:src="@drawable/ic_view_day"
+            app:tint="@color/Verde_scuro" />
+
     </RelativeLayout>
 
-    <ScrollView
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <!-- DAILY VIEW -->
+        <ScrollView
+            android:id="@+id/dailyView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -295,5 +312,52 @@
 
         </LinearLayout>
     </ScrollView>
+
+    <!-- WEEKLY VIEW -->
+    <ScrollView
+        android:id="@+id/weeklyView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/weeklyContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp" />
+    </ScrollView>
+
+    <!-- MONTHLY VIEW -->
+    <LinearLayout
+        android:id="@+id/monthlyView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/monthTitleTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Agosto 2026"
+            android:textColor="@color/Verde_scuro"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"/>
+
+        <GridView
+            android:id="@+id/monthGridView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:numColumns="7"
+            android:verticalSpacing="8dp"
+            android:horizontalSpacing="8dp"
+            android:stretchMode="columnWidth" />
+    </LinearLayout>
+
+</FrameLayout>
 
 </LinearLayout>

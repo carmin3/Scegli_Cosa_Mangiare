@@ -121,35 +121,55 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(q, new String[]{date});
         PianoPasto piano = null;
         if (c.moveToFirst()) {
-            int dataIdx = c.getColumnIndex(COLUMN_DATA);
-            int protPIdx = c.getColumnIndex(COLUMN_PROT_PRANZO);
-            int p1Idx = c.getColumnIndex(COLUMN_PRANZO_PRIMO);
-            int p2Idx = c.getColumnIndex(COLUMN_PRANZO_SECONDO);
-            int p3Idx = c.getColumnIndex(COLUMN_PRANZO_CONTORNO);
-            int p4Idx = c.getColumnIndex(COLUMN_PRANZO_PIATTO_UNICO);
-            int protCIdx = c.getColumnIndex(COLUMN_PROT_CENA);
-            int c1Idx = c.getColumnIndex(COLUMN_CENA_PRIMO);
-            int c2Idx = c.getColumnIndex(COLUMN_CENA_SECONDO);
-            int c3Idx = c.getColumnIndex(COLUMN_CENA_CONTORNO);
-            int c4Idx = c.getColumnIndex(COLUMN_CENA_PIATTO_UNICO);
-
-            piano = new PianoPasto(
-                    getStringOrEmpty(c, dataIdx, date),
-                    getStringOrEmpty(c, protPIdx, "Casuale"),
-                    getStringOrEmpty(c, p1Idx, ""),
-                    getStringOrEmpty(c, p2Idx, ""),
-                    getStringOrEmpty(c, p3Idx, ""),
-                    getStringOrEmpty(c, p4Idx, ""),
-                    getStringOrEmpty(c, protCIdx, "Casuale"),
-                    getStringOrEmpty(c, c1Idx, ""),
-                    getStringOrEmpty(c, c2Idx, ""),
-                    getStringOrEmpty(c, c3Idx, ""),
-                    getStringOrEmpty(c, c4Idx, "")
-            );
+            piano = getPianoFromCursor(c, date);
         }
         c.close();
         db.close();
         return piano;
+    }
+
+    public ArrayList<PianoPasto> getPianiPastoForMonth(String monthPrefix) {
+        ArrayList<PianoPasto> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String q = "SELECT * FROM " + PIANO_PASTO_TABLE + " WHERE " + COLUMN_DATA + " LIKE ?";
+        Cursor c = db.rawQuery(q, new String[]{monthPrefix + "%"});
+        if (c.moveToFirst()) {
+            do {
+                list.add(getPianoFromCursor(c, null));
+            } while (c.moveToNext());
+        }
+        c.close();
+        db.close();
+        return list;
+    }
+
+    private PianoPasto getPianoFromCursor(Cursor c, String date) {
+        int dataIdx = c.getColumnIndex(COLUMN_DATA);
+        int protPIdx = c.getColumnIndex(COLUMN_PROT_PRANZO);
+        int p1Idx = c.getColumnIndex(COLUMN_PRANZO_PRIMO);
+        int p2Idx = c.getColumnIndex(COLUMN_PRANZO_SECONDO);
+        int p3Idx = c.getColumnIndex(COLUMN_PRANZO_CONTORNO);
+        int p4Idx = c.getColumnIndex(COLUMN_PRANZO_PIATTO_UNICO);
+        int protCIdx = c.getColumnIndex(COLUMN_PROT_CENA);
+        int c1Idx = c.getColumnIndex(COLUMN_CENA_PRIMO);
+        int c2Idx = c.getColumnIndex(COLUMN_CENA_SECONDO);
+        int c3Idx = c.getColumnIndex(COLUMN_CENA_CONTORNO);
+        int c4Idx = c.getColumnIndex(COLUMN_CENA_PIATTO_UNICO);
+
+        String rowDate = (dataIdx != -1) ? c.getString(dataIdx) : date;
+        return new PianoPasto(
+                getStringOrEmpty(c, dataIdx, rowDate),
+                getStringOrEmpty(c, protPIdx, "Casuale"),
+                getStringOrEmpty(c, p1Idx, ""),
+                getStringOrEmpty(c, p2Idx, ""),
+                getStringOrEmpty(c, p3Idx, ""),
+                getStringOrEmpty(c, p4Idx, ""),
+                getStringOrEmpty(c, protCIdx, "Casuale"),
+                getStringOrEmpty(c, c1Idx, ""),
+                getStringOrEmpty(c, c2Idx, ""),
+                getStringOrEmpty(c, c3Idx, ""),
+                getStringOrEmpty(c, c4Idx, "")
+        );
     }
 
     private String getStringOrEmpty(Cursor c, int idx, String def) {

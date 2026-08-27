@@ -11,20 +11,45 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListPopupWindow;
 import android.widget.Spinner;
+import android.view.GestureDetector;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
+import android.widget.GridView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class CalendarioActivity extends AppCompatActivity {
+
+    private enum ViewMode { DAILY, WEEKLY, MONTHLY }
+    private ViewMode currentMode = ViewMode.DAILY;
+    private GestureDetector gestureDetector;
+
+    private ScrollView dailyView, weeklyView;
+    private LinearLayout monthlyView, weeklyContainer;
+    private ImageButton viewSwitchBtn, homeBtn;
+    private TextView monthTitleTV;
+    private GridView monthGridView;
 
     private String selectedDate;
     private DataBaseHelper dbHelper;
@@ -47,6 +72,16 @@ public class CalendarioActivity extends AppCompatActivity {
         dbHelper = new DataBaseHelper(this);
         repository = new PiattoRepository(this);
         selectedDate = getIntent().getStringExtra("selectedDate");
+
+        // UI Components
+        dailyView = findViewById(R.id.dailyView);
+        weeklyView = findViewById(R.id.weeklyView);
+        monthlyView = findViewById(R.id.monthlyView);
+        weeklyContainer = findViewById(R.id.weeklyContainer);
+        viewSwitchBtn = findViewById(R.id.viewSwitchBtn);
+        monthTitleTV = findViewById(R.id.monthTitleTV);
+        monthGridView = findViewById(R.id.monthGridView);
+        homeBtn = findViewById(R.id.homeBtn);
 
         editDateTV = findViewById(R.id.editDateTV);
         spinnerProtPranzo = findViewById(R.id.spinnerProtPranzo);
@@ -74,7 +109,7 @@ public class CalendarioActivity extends AppCompatActivity {
         displayDate();
         loadData();
 
-        findViewById(R.id.homeBtn).setOnClickListener(v -> finish());
+        homeBtn.setOnClickListener(v -> finish());
         btnSalvaPiano = findViewById(R.id.btnSalvaPiano);
         btnSalvaPiano.setOnClickListener(v -> savePiano());
 
@@ -98,6 +133,314 @@ public class CalendarioActivity extends AppCompatActivity {
         setupRandomButton(btnActionCSecondo, etCenaSecondo, "Secondo", spinnerProtCena);
         setupRandomButton(btnActionCContorno, etCenaContorno, "Contorno", spinnerProtCena);
         setupRandomButton(btnActionCPiattoUnico, etCenaPiattoUnico, "Piatto Unico", spinnerProtCena);
+
+        setupViewSwitch();
+        setupGestureDetector();
+    }
+
+    private void setupGestureDetector() {
+        gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                if (e1 == null || e2 == null) return false;
+                float diffX = e2.getX() - e1.getX();
+                if (Math.abs(diffX) > 100 && Math.abs(velocityX) > 100) {
+                    boolean forward = diffX < 0;
+                    switch (currentMode) {
+                        case DAILY:
+                            changeDate(forward ? 1 : -1);
+                            break;
+                        case WEEKLY:
+                            changeWeek(forward ? 1 : -1);
+                            break;
+                        case MONTHLY:
+                            changeMonth(forward ? 1 : -1);
+                            break;
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        View.OnTouchListener touchListener = (v, event) -> {
+            gestureDetector.onTouchEvent(event);
+            return false;
+        };
+
+        dailyView.setOnTouchListener(touchListener);
+        weeklyView.setOnTouchListener(touchListener);
+        monthGridView.setOnTouchListener(touchListener);
+        monthlyView.setOnTouchListener(touchListener);
+    }
+
+    private void animateViewChange(final View view, final boolean forward, final Runnable updateAction) {
+        int outAnim = forward ? R.anim.slide_out_left : R.anim.slide_out_right;
+        final int inAnim = forward ? R.anim.slide_in_right : R.anim.slide_in_left;
+
+        Animation out = AnimationUtils.loadAnimation(this, outAnim);
+        out.setAnimationListener(new Animation.AnimationListener() {
+            @Override public void onAnimationStart(Animation animation) {}
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                updateAction.run();
+                view.startAnimation(AnimationUtils.loadAnimation(CalendarioActivity.this, inAnim));
+            }
+            @Override public void onAnimationRepeat(Animation animation) {}
+        });
+        view.startAnimation(out);
+    }
+
+    private void changeDate(int days) {
+        try {
+            SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            Date date = dbFormat.parse(selectedDate);
+            Calendar cal = Calendar.getInstance();
+            if (date != null) cal.setTime(date);
+            cal.add(Calendar.DAY_OF_MONTH, days);
+            selectedDate = dbFormat.format(cal.getTime());
+
+            animateViewChange(dailyView, days > 0, () -> {
+                displayDate();
+                loadData();
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void changeWeek(int weeks) {
+        try {
+            SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            Date date = dbFormat.parse(selectedDate);
+            Calendar cal = Calendar.getInstance();
+            if (date != null) cal.setTime(date);
+            cal.add(Calendar.WEEK_OF_YEAR, weeks);
+            selectedDate = dbFormat.format(cal.getTime());
+
+            animateViewChange(weeklyView, weeks > 0, this::populateWeeklyView);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void changeMonth(int months) {
+        try {
+            SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            Date date = dbFormat.parse(selectedDate);
+            Calendar cal = Calendar.getInstance();
+            if (date != null) cal.setTime(date);
+            cal.add(Calendar.MONTH, months);
+            selectedDate = dbFormat.format(cal.getTime());
+
+            animateViewChange(monthlyView, months > 0, this::populateMonthlyView);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setupViewSwitch() {
+        viewSwitchBtn.setOnClickListener(v -> {
+            switch (currentMode) {
+                case DAILY:
+                    currentMode = ViewMode.WEEKLY;
+                    viewSwitchBtn.setImageResource(R.drawable.ic_view_week);
+                    showWeeklyView();
+                    break;
+                case WEEKLY:
+                    currentMode = ViewMode.MONTHLY;
+                    viewSwitchBtn.setImageResource(R.drawable.ic_calendar_month);
+                    showMonthlyView();
+                    break;
+                case MONTHLY:
+                    currentMode = ViewMode.DAILY;
+                    viewSwitchBtn.setImageResource(R.drawable.ic_view_day);
+                    showDailyView();
+                    break;
+            }
+        });
+    }
+
+    private void showDailyView() {
+        dailyView.setVisibility(View.VISIBLE);
+        weeklyView.setVisibility(View.GONE);
+        monthlyView.setVisibility(View.GONE);
+        displayDate();
+        loadData();
+    }
+
+    private void showWeeklyView() {
+        dailyView.setVisibility(View.GONE);
+        weeklyView.setVisibility(View.VISIBLE);
+        monthlyView.setVisibility(View.GONE);
+        populateWeeklyView();
+    }
+
+    private void populateWeeklyView() {
+        weeklyContainer.removeAllViews();
+        try {
+            SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            Date date = dbFormat.parse(selectedDate);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            cal.add(Calendar.DAY_OF_MONTH, -1); // Start from yesterday
+
+            SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE d MMMM", Locale.ITALIAN);
+
+            for (int i = 0; i < 5; i++) {
+                final String dateStr = dbFormat.format(cal.getTime());
+                View card = getLayoutInflater().inflate(R.layout.item_weekly_day, weeklyContainer, false);
+
+                TextView dateTV = card.findViewById(R.id.weeklyDateTV);
+                TextView summaryTV = card.findViewById(R.id.weeklySummaryTV);
+                CardView cardView = card.findViewById(R.id.weeklyDayCard);
+
+                String formattedDate = dayFormat.format(cal.getTime());
+                formattedDate = formattedDate.substring(0, 1).toUpperCase() + formattedDate.substring(1);
+
+                // Set height based on day
+                ViewGroup.LayoutParams params = cardView.getLayoutParams();
+                if (i == 1) { // Oggi
+                    params.height = (int) (180 * getResources().getDisplayMetrics().density);
+                    dateTV.setText(formattedDate + " (Oggi)");
+                } else if (i == 0) { // Ieri
+                    params.height = (int) (100 * getResources().getDisplayMetrics().density);
+                    dateTV.setText(formattedDate);
+                } else { // Altri
+                    params.height = (int) (130 * getResources().getDisplayMetrics().density);
+                    dateTV.setText(formattedDate);
+                }
+                cardView.setLayoutParams(params);
+
+                // Summary
+                PianoPasto piano = dbHelper.getPianoPastoByDate(dateStr);
+                if (piano != null) {
+                    StringBuilder sb = new StringBuilder();
+                    appendDish(sb, piano.getPranzoPrimo());
+                    appendDish(sb, piano.getPranzoSecondo());
+                    appendDish(sb, piano.getPranzoContorno());
+                    appendDish(sb, piano.getPranzoPiattoUnico());
+                    appendDish(sb, piano.getCenaPrimo());
+                    appendDish(sb, piano.getCenaSecondo());
+                    appendDish(sb, piano.getCenaContorno());
+                    appendDish(sb, piano.getCenaPiattoUnico());
+
+                    String summary = sb.toString().trim();
+                    if (summary.endsWith(",")) summary = summary.substring(0, summary.length() - 1);
+                    summaryTV.setText(summary.isEmpty() ? "Pasti non impostati" : summary);
+                } else {
+                    summaryTV.setText("Pasti non impostati");
+                }
+
+                card.setOnClickListener(v -> {
+                    selectedDate = dateStr;
+                    currentMode = ViewMode.DAILY;
+                    viewSwitchBtn.setImageResource(R.drawable.ic_view_day);
+                    showDailyView();
+                });
+
+                weeklyContainer.addView(card);
+                cal.add(Calendar.DAY_OF_MONTH, 1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showMonthlyView() {
+        dailyView.setVisibility(View.GONE);
+        weeklyView.setVisibility(View.GONE);
+        monthlyView.setVisibility(View.VISIBLE);
+        populateMonthlyView();
+    }
+
+    private void populateMonthlyView() {
+        try {
+            SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            Date date = dbFormat.parse(selectedDate);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+
+            String monthStr = new SimpleDateFormat("MMMM yyyy", Locale.ITALIAN).format(cal.getTime());
+            monthStr = monthStr.substring(0, 1).toUpperCase() + monthStr.substring(1);
+            monthTitleTV.setText(monthStr);
+
+            String monthPrefix = new SimpleDateFormat("yyyy-MM", Locale.US).format(cal.getTime());
+            ArrayList<PianoPasto> piani = dbHelper.getPianiPastoForMonth(monthPrefix);
+            Map<Integer, Boolean> populatedDays = new HashMap<>();
+            for (PianoPasto p : piani) {
+                try {
+                    int day = Integer.parseInt(p.getData().substring(8));
+                    populatedDays.put(day, true);
+                } catch (Exception ignored) {}
+            }
+
+            monthGridView.setAdapter(new MonthlyAdapter(cal.get(Calendar.MONTH), cal.get(Calendar.YEAR), populatedDays));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private class MonthlyAdapter extends BaseAdapter {
+        private int month, year, daysInMonth, firstDayOfWeek;
+        private Map<Integer, Boolean> populatedDays;
+
+        public MonthlyAdapter(int month, int year, Map<Integer, Boolean> populatedDays) {
+            this.month = month;
+            this.year = year;
+            this.populatedDays = populatedDays;
+
+            Calendar cal = Calendar.getInstance();
+            cal.set(year, month, 1);
+            this.daysInMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+            this.firstDayOfWeek = cal.get(Calendar.DAY_OF_WEEK) - 2; // Lunedì=0 (Calendar.MONDAY is 2)
+            if (this.firstDayOfWeek < 0) this.firstDayOfWeek += 7;
+        }
+
+        @Override public int getCount() { return 42; }
+        @Override public Object getItem(int position) { return null; }
+        @Override public long getItemId(int position) { return position; }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = getLayoutInflater().inflate(R.layout.item_calendar_day, parent, false);
+            }
+
+            TextView dayTV = convertView.findViewById(R.id.dayNumberTV);
+            int day = position - firstDayOfWeek + 1;
+
+            if (day > 0 && day <= daysInMonth) {
+                dayTV.setText(String.valueOf(day));
+                dayTV.setVisibility(View.VISIBLE);
+
+                if (populatedDays.containsKey(day)) {
+                    dayTV.setBackgroundResource(R.drawable.bg_pill);
+                } else {
+                    dayTV.setBackgroundResource(R.drawable.rounded_corner_bg);
+                }
+
+                convertView.setOnClickListener(v -> {
+                    Calendar c = Calendar.getInstance();
+                    c.set(year, month, day);
+                    selectedDate = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(c.getTime());
+                    currentMode = ViewMode.DAILY;
+                    viewSwitchBtn.setImageResource(R.drawable.ic_view_day);
+                    showDailyView();
+                });
+            } else {
+                dayTV.setVisibility(View.INVISIBLE);
+                convertView.setOnClickListener(null);
+            }
+
+            return convertView;
+        }
+    }
+
+    private void appendDish(StringBuilder sb, String dish) {
+        if (dish != null && !dish.isEmpty()) {
+            sb.append(dish).append(", ");
+        }
     }
 
     private void setupSpinners() {

@@ -146,25 +146,27 @@
             app:cornerRadius="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.494"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.75" />
+            app:layout_constraintVertical_bias="0.7" />
 
         <ImageButton
             android:id="@+id/ListaBtn"
             android:layout_width="80dp"
             android:layout_height="80dp"
+            android:layout_marginTop="29dp"
             android:background="@color/Verde_BG"
             android:contentDescription="@string/lista_piatti_description"
             android:scaleX="2"
             android:scaleY="2"
             android:src="@drawable/list_icon"
-            app:tint="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.8" />
+            app:layout_constraintTop_toBottomOf="@+id/ProponiPiattoBtn"
+            app:layout_constraintVertical_bias="0.2"
+            app:tint="@color/black" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
