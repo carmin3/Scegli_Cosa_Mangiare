@@ -24,5 +24,11 @@ public class ImpostazioniActivity extends AppCompatActivity {
             Intent intent = new Intent(ImpostazioniActivity.this, DbActionsActivity.class);
             startActivity(intent);
         });
+
+        TextView backupRipristinoCalendarioTV = findViewById(R.id.tv_backup_ripristino_calendario);
+        backupRipristinoCalendarioTV.setOnClickListener(v -> {
+            Intent intent = new Intent(ImpostazioniActivity.this, CalendarDbActionsActivity.class);
+            startActivity(intent);
+        });
     }
 }

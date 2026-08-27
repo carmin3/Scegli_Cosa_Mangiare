@@ -18,6 +18,13 @@
     </string-array>
 
     <string name="backup_ripristino">Backup e Ripristino ricette</string>
+    <string name="backup_ripristino_calendario">Backup e Ripristino calendario</string>
+    <string name="esporta_calendario">Esporta calendario</string>
+    <string name="importa_calendario">Importa calendario</string>
+    <string name="pulisci_calendario">Pulisci calendario</string>
+    <string name="conferma_pulizia_calendario">Vuoi pulire completamente il calendario? Questa azione non può essere annullata.</string>
+    <string name="calendario_pulito">Calendario pulito correttamente</string>
+    <string name="pulizia_fallita">Errore durante la pulizia del calendario</string>
     <string name="impostazioni">IMPOSTAZIONI</string>
     <string name="proponimi_un_piatto">Proponimi un piatto!</string>
     <string name="aggiungi_ai_preferiti">AGGIUNGI AI PREFERITI</string>

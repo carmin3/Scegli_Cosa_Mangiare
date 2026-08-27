@@ -25,6 +25,9 @@
             android:name=".DbActionsActivity"
             android:exported="false" />
         <activity
+            android:name=".CalendarDbActionsActivity"
+            android:exported="false" />
+        <activity
             android:name=".ImpostazioniActivity"
             android:exported="false" />
         <activity

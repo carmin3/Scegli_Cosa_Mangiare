@@ -438,4 +438,94 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return rows >= 0;
     }
 
+    public int exportCalendarToOutputStream(OutputStream os) {
+        JSONArray arr = new JSONArray();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT * FROM " + PIANO_PASTO_TABLE, null);
+        try {
+            if (c != null && c.moveToFirst()) {
+                int dataIdx = c.getColumnIndex(COLUMN_DATA);
+                int protPIdx = c.getColumnIndex(COLUMN_PROT_PRANZO);
+                int p1Idx = c.getColumnIndex(COLUMN_PRANZO_PRIMO);
+                int p2Idx = c.getColumnIndex(COLUMN_PRANZO_SECONDO);
+                int p3Idx = c.getColumnIndex(COLUMN_PRANZO_CONTORNO);
+                int p4Idx = c.getColumnIndex(COLUMN_PRANZO_PIATTO_UNICO);
+                int protCIdx = c.getColumnIndex(COLUMN_PROT_CENA);
+                int c1Idx = c.getColumnIndex(COLUMN_CENA_PRIMO);
+                int c2Idx = c.getColumnIndex(COLUMN_CENA_SECONDO);
+                int c3Idx = c.getColumnIndex(COLUMN_CENA_CONTORNO);
+                int c4Idx = c.getColumnIndex(COLUMN_CENA_PIATTO_UNICO);
+
+                do {
+                    JSONObject o = new JSONObject();
+                    o.put("data", (dataIdx != -1) ? c.getString(dataIdx) : "");
+                    o.put("prot_pranzo", (protPIdx != -1) ? c.getString(protPIdx) : "");
+                    o.put("p1", (p1Idx != -1) ? c.getString(p1Idx) : "");
+                    o.put("p2", (p2Idx != -1) ? c.getString(p2Idx) : "");
+                    o.put("p3", (p3Idx != -1) ? c.getString(p3Idx) : "");
+                    o.put("p4", (p4Idx != -1) ? c.getString(p4Idx) : "");
+                    o.put("prot_cena", (protCIdx != -1) ? c.getString(protCIdx) : "");
+                    o.put("c1", (c1Idx != -1) ? c.getString(c1Idx) : "");
+                    o.put("c2", (c2Idx != -1) ? c.getString(c2Idx) : "");
+                    o.put("c3", (c3Idx != -1) ? c.getString(c3Idx) : "");
+                    o.put("c4", (c4Idx != -1) ? c.getString(c4Idx) : "");
+                    arr.put(o);
+                } while (c.moveToNext());
+            }
+            os.write(arr.toString(2).getBytes());
+            return arr.length();
+        } catch (Exception e) {
+            Log.e("CALENDAR_EXPORT", "stream export error", e);
+            return -1;
+        } finally {
+            if (c != null && !c.isClosed()) c.close();
+            db.close();
+        }
+    }
+
+    public int importCalendarFromInputStream(InputStream is) {
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line).append('\n');
+            }
+            JSONArray arr = new JSONArray(sb.toString());
+            int processed = 0;
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject o = arr.getJSONObject(i);
+                String data = o.optString("data", "");
+                if (data.isEmpty()) continue;
+
+                PianoPasto p = new PianoPasto(
+                        data,
+                        o.optString("prot_pranzo", "Casuale"),
+                        o.optString("p1", ""),
+                        o.optString("p2", ""),
+                        o.optString("p3", ""),
+                        o.optString("p4", ""),
+                        o.optString("prot_cena", "Casuale"),
+                        o.optString("c1", ""),
+                        o.optString("c2", ""),
+                        o.optString("c3", ""),
+                        o.optString("c4", "")
+                );
+                savePianoPasto(p);
+                processed++;
+            }
+            return processed;
+        } catch (Exception e) {
+            Log.e("CALENDAR_IMPORT", "stream import error", e);
+            return -1;
+        }
+    }
+
+    public boolean clearCalendar() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rows = db.delete(PIANO_PASTO_TABLE, null, null);
+        db.close();
+        return rows >= 0;
+    }
+
 }

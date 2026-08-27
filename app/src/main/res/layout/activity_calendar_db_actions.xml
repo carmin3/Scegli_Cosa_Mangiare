@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/Verde_BG">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp">
+
+        <ImageButton
+            android:id="@+id/homeBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:background="@null"
+            android:scaleX="0.8"
+            android:scaleY="0.8"
+            android:src="@drawable/home_icon"
+            app:tint="@color/Verde_scuro"
+            android:contentDescription="@string/home_description" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Backup e Ripristino Calendario"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/settingsBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@null"
+            android:src="@android:drawable/ic_menu_preferences"
+            app:tint="@color/Verde_scuro"
+            android:contentDescription="@string/settings_description" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <Button
+            android:id="@+id/btn_export_calendar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/esporta_calendario" />
+
+        <Button
+            android:id="@+id/btn_import_calendar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/importa_calendario" />
+
+        <Button
+            android:id="@+id/btn_clear_calendar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pulisci_calendario" />
+    </LinearLayout>
+
+</LinearLayout>
