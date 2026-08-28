@@ -159,12 +159,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         String rowDate = (dataIdx != -1) ? c.getString(dataIdx) : date;
         return new PianoPasto(
                 getStringOrEmpty(c, dataIdx, rowDate),
-                getStringOrEmpty(c, protPIdx, "Casuale"),
+                getStringOrEmpty(c, protPIdx, "Dieta Bilanciata"),
                 getStringOrEmpty(c, p1Idx, ""),
                 getStringOrEmpty(c, p2Idx, ""),
                 getStringOrEmpty(c, p3Idx, ""),
                 getStringOrEmpty(c, p4Idx, ""),
-                getStringOrEmpty(c, protCIdx, "Casuale"),
+                getStringOrEmpty(c, protCIdx, "Dieta Bilanciata"),
                 getStringOrEmpty(c, c1Idx, ""),
                 getStringOrEmpty(c, c2Idx, ""),
                 getStringOrEmpty(c, c3Idx, ""),
@@ -500,12 +500,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
                 PianoPasto p = new PianoPasto(
                         data,
-                        o.optString("prot_pranzo", "Casuale"),
+                        o.optString("prot_pranzo", "Dieta Bilanciata"),
                         o.optString("p1", ""),
                         o.optString("p2", ""),
                         o.optString("p3", ""),
                         o.optString("p4", ""),
-                        o.optString("prot_cena", "Casuale"),
+                        o.optString("prot_cena", "Dieta Bilanciata"),
                         o.optString("c1", ""),
                         o.optString("c2", ""),
                         o.optString("c3", ""),

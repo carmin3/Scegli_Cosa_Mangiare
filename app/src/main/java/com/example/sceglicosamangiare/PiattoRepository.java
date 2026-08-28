@@ -133,7 +133,7 @@ public class PiattoRepository {
         ArrayList<Piatto> all = getAllData();
         ArrayList<Piatto> filtered = new ArrayList<>();
         String protLower = proteina.toLowerCase().trim();
-        boolean filterProt = !protLower.equals("casuale");
+        boolean filterProt = !protLower.equals("casuale") && !protLower.equals("dieta bilanciata");
 
         for (Piatto p : all) {
             if (p.getPortata() != null && p.getPortata().equalsIgnoreCase(portata)) {

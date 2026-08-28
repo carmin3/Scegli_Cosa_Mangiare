@@ -224,11 +224,22 @@
                     app:tint="@color/Verde_scuro" />
             </RelativeLayout>
 
+            <TextView
+                android:id="@+id/infoNutrienteTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:gravity="center"
+                android:text="Il menù è a base di..."
+                android:textColor="@color/Verde_scuro"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
             <!-- Sezione Scelta Ingrediente -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="16dp"
                 android:text="Cosa usiamo come ingrediente principale?"
                 android:textColor="@color/black"
                 android:textSize="14sp"
@@ -252,7 +263,7 @@
                 android:backgroundTint="@color/Verde_scuro"
                 android:text="Ricrea il menù"
                 android:textColor="@color/white"
-                android:visibility="gone" />
+                android:visibility="visible" />
 
         </LinearLayout>
     </ScrollView>

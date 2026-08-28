@@ -14,7 +14,7 @@
         <item>Carne Rossa</item>
         <item>Carne Bianca</item>
         <item>Pesce</item>
-        <item>Altro</item>
+        <item>Vegetariano</item>
     </string-array>
 
     <string name="backup_ripristino">Backup e Ripristino ricette</string>

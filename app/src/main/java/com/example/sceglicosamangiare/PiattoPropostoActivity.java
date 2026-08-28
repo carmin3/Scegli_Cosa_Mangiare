@@ -24,7 +24,7 @@ public class PiattoPropostoActivity extends AppCompatActivity {
     private ArrayList<Piatto> listaPiatti;
     private String proteinaScelta;
     private Spinner proteinaSpinner;
-    private final List<String> opzioniProteina = Arrays.asList("Casuale", "Carne Bianca", "Pesce", "Carne Rossa", "Altro");
+    private final List<String> opzioniProteina = Arrays.asList("Dieta Equilibrata", "Carne Bianca", "Pesce", "Carne Rossa", "Vegetariano");
 
     private Piatto currentPrimo;
     private Piatto currentSecondo;
@@ -43,7 +43,7 @@ public class PiattoPropostoActivity extends AppCompatActivity {
         
         // Primo avvio: scelta casuale completa
         sceltaCasualeProteina();
-        updateSpinnerSelection();
+        proteinaSpinner.setSelection(0); // Default a "Dieta Equilibrata"
         refreshAllDishes(proteinaScelta);
 
         backHomeActivity();
@@ -55,36 +55,21 @@ public class PiattoPropostoActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, opzioniProteina);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         proteinaSpinner.setAdapter(adapter);
-
-        proteinaSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                findViewById(R.id.btnRicreaMenu).setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-    }
-
-    private void updateSpinnerSelection() {
-        int index = opzioniProteina.indexOf(proteinaScelta);
-        if (index != -1) {
-            proteinaSpinner.setSelection(index);
-        }
     }
 
     private void setupButtons() {
         // Bottone "Ricrea il menù" sotto lo spinner
         findViewById(R.id.btnRicreaMenu).setOnClickListener(v -> {
             String selected = proteinaSpinner.getSelectedItem().toString();
-            if (selected.equalsIgnoreCase("Casuale")) {
+            if (selected.equalsIgnoreCase("Dieta Equilibrata")) {
                 sceltaCasualeProteina();
-                updateSpinnerSelection();
             } else {
                 proteinaScelta = selected;
             }
             refreshAllDishes(proteinaScelta);
+            
+            // Dopo il clic, lo spinner torna a "Dieta Equilibrata"
+            proteinaSpinner.setSelection(0);
         });
 
         // Bottoni refresh singoli
@@ -102,7 +87,7 @@ public class PiattoPropostoActivity extends AppCompatActivity {
 
     private void refreshSingleDish(int viewId, String portata) {
         String proteina = proteinaSpinner.getSelectedItem().toString();
-        if (proteina.equalsIgnoreCase("Casuale")) {
+        if (proteina.equalsIgnoreCase("Dieta Equilibrata")) {
             proteina = proteinaScelta;
         }
         ArrayList<Piatto> piattiFiltrati = filtraPerProteina(proteina);
@@ -124,6 +109,15 @@ public class PiattoPropostoActivity extends AppCompatActivity {
     }
 
     private void refreshAllDishes(String proteina) {
+        TextView infoTv = findViewById(R.id.infoNutrienteTV);
+        if (infoTv != null) {
+            if (proteina.equalsIgnoreCase("Vegetariano")) {
+                infoTv.setText("Il menù è vegetariano");
+            } else {
+                infoTv.setText("Il menù è a base di " + proteina.toLowerCase());
+            }
+        }
+
         ArrayList<Piatto> piattiConProteina = filtraPerProteina(proteina);
 
         updateDishUI(R.id.primoPropostoTV, pickRandomByPortata(piattiConProteina, "Primo"));
@@ -135,10 +129,10 @@ public class PiattoPropostoActivity extends AppCompatActivity {
         //Scelta del tipo di proteina per il piatto casuale
         SceltaCasualeTipoProteina<String> itemDrops = new SceltaCasualeTipoProteina<>();
 
-        itemDrops.addEntry("Carne Rossa",  5.0);
-        itemDrops.addEntry("Carne Bianca",   20.0);
-        itemDrops.addEntry("Pesce",  45.0);
-        itemDrops.addEntry("Altro",   20.0);
+        itemDrops.addEntry("Carne Rossa",  1.0);
+        itemDrops.addEntry("Carne Bianca",   2.0);
+        itemDrops.addEntry("Pesce",  3.0);
+        itemDrops.addEntry("Vegetariano",   4.0);
         proteinaScelta = itemDrops.getProteina();
 
     }

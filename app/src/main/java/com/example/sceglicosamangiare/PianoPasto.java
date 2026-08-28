@@ -9,8 +9,8 @@ public class PianoPasto {
 
     public PianoPasto(String data) {
         this.data = data;
-        this.proteinaPranzo = "Casuale";
-        this.proteinaCena = "Casuale";
+        this.proteinaPranzo = "Dieta Bilanciata";
+        this.proteinaCena = "Dieta Bilanciata";
         this.pranzoPrimo = ""; this.pranzoSecondo = ""; this.pranzoContorno = ""; this.pranzoPiattoUnico = "";
         this.cenaPrimo = ""; this.cenaSecondo = ""; this.cenaContorno = ""; this.cenaPiattoUnico = "";
     }

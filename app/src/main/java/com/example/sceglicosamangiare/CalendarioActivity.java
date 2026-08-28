@@ -62,7 +62,7 @@ public class CalendarioActivity extends AppCompatActivity {
     private ImageButton btnActionCPrimo, btnActionCSecondo, btnActionCContorno, btnActionCPiattoUnico;
     private TextView editDateTV;
     private ListPopupWindow popupWindow;
-    private String[] proteine = {"Carne Rossa", "Carne Bianca", "Pesce", "Altro", "Casuale"};
+    private String[] proteine = {"Dieta Bilanciata", "Carne Rossa", "Carne Bianca", "Pesce", "Vegetariano"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -481,6 +481,18 @@ public class CalendarioActivity extends AppCompatActivity {
 
             setSpinnerSelection(spinnerProtPranzo, piano.getProteinaPranzo());
             setSpinnerSelection(spinnerProtCena, piano.getProteinaCena());
+        } else {
+            clearDishState(etPranzoPrimo, btnActionPPrimo);
+            clearDishState(etPranzoSecondo, btnActionPSecondo);
+            clearDishState(etPranzoContorno, btnActionPContorno);
+            clearDishState(etPranzoPiattoUnico, btnActionPPiattoUnico);
+            clearDishState(etCenaPrimo, btnActionCPrimo);
+            clearDishState(etCenaSecondo, btnActionCSecondo);
+            clearDishState(etCenaContorno, btnActionCContorno);
+            clearDishState(etCenaPiattoUnico, btnActionCPiattoUnico);
+
+            spinnerProtPranzo.setSelection(0);
+            spinnerProtCena.setSelection(0);
         }
     }
 
@@ -508,8 +520,12 @@ public class CalendarioActivity extends AppCompatActivity {
     }
 
     private void setSpinnerSelection(Spinner spinner, String value) {
+        String valToSelect = value;
+        if (value != null && value.equalsIgnoreCase("Casuale")) {
+            valToSelect = "Dieta Bilanciata";
+        }
         for (int i = 0; i < proteine.length; i++) {
-            if (proteine[i].equalsIgnoreCase(value)) {
+            if (proteine[i].equalsIgnoreCase(valToSelect)) {
                 spinner.setSelection(i);
                 break;
             }
@@ -548,7 +564,7 @@ public class CalendarioActivity extends AppCompatActivity {
 
         // --- PRANZO ---
         String proteinaPranzo = spinnerProtPranzo.getSelectedItem().toString();
-        if (proteinaPranzo.equalsIgnoreCase("Casuale")) {
+        if (proteinaPranzo.equalsIgnoreCase("Dieta Bilanciata")) {
             proteinaPranzo = getWeightedRandomProteina();
             setSpinnerSelection(spinnerProtPranzo, proteinaPranzo);
         }
@@ -563,7 +579,7 @@ public class CalendarioActivity extends AppCompatActivity {
 
         // --- CENA ---
         String proteinaCena = spinnerProtCena.getSelectedItem().toString();
-        if (proteinaCena.equalsIgnoreCase("Casuale")) {
+        if (proteinaCena.equalsIgnoreCase("Dieta Bilanciata")) {
             proteinaCena = getWeightedRandomProteina();
             setSpinnerSelection(spinnerProtCena, proteinaCena);
         }
@@ -584,7 +600,7 @@ public class CalendarioActivity extends AppCompatActivity {
         itemDrops.addEntry("Carne Rossa", 5.0);
         itemDrops.addEntry("Carne Bianca", 20.0);
         itemDrops.addEntry("Pesce", 45.0);
-        itemDrops.addEntry("Altro", 20.0);
+        itemDrops.addEntry("Vegetariano", 20.0);
         return itemDrops.getProteina();
     }
 
