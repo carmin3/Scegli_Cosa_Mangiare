@@ -24,7 +24,7 @@ public class PiattoPropostoActivity extends AppCompatActivity {
     private ArrayList<Piatto> listaPiatti;
     private String proteinaScelta;
     private Spinner proteinaSpinner;
-    private final List<String> opzioniProteina = Arrays.asList("Dieta Equilibrata", "Carne Bianca", "Pesce", "Carne Rossa", "Vegetariano");
+    private final List<String> opzioniProteina = Arrays.asList("Dieta Bilanciata", "Carne Bianca", "Pesce", "Carne Rossa", "Vegetariano");
 
     private Piatto currentPrimo;
     private Piatto currentSecondo;
@@ -43,7 +43,7 @@ public class PiattoPropostoActivity extends AppCompatActivity {
         
         // Primo avvio: scelta casuale completa
         sceltaCasualeProteina();
-        proteinaSpinner.setSelection(0); // Default a "Dieta Equilibrata"
+        proteinaSpinner.setSelection(0); // Default a "Dieta Bilanciata"
         refreshAllDishes(proteinaScelta);
 
         backHomeActivity();
@@ -61,14 +61,14 @@ public class PiattoPropostoActivity extends AppCompatActivity {
         // Bottone "Ricrea il menù" sotto lo spinner
         findViewById(R.id.btnRicreaMenu).setOnClickListener(v -> {
             String selected = proteinaSpinner.getSelectedItem().toString();
-            if (selected.equalsIgnoreCase("Dieta Equilibrata")) {
+            if (selected.equalsIgnoreCase("Dieta Bilanciata")) {
                 sceltaCasualeProteina();
             } else {
                 proteinaScelta = selected;
             }
             refreshAllDishes(proteinaScelta);
             
-            // Dopo il clic, lo spinner torna a "Dieta Equilibrata"
+            // Dopo il clic, lo spinner torna a "Dieta Bilanciata"
             proteinaSpinner.setSelection(0);
         });
 
@@ -87,7 +87,7 @@ public class PiattoPropostoActivity extends AppCompatActivity {
 
     private void refreshSingleDish(int viewId, String portata) {
         String proteina = proteinaSpinner.getSelectedItem().toString();
-        if (proteina.equalsIgnoreCase("Dieta Equilibrata")) {
+        if (proteina.equalsIgnoreCase("Dieta Bilanciata")) {
             proteina = proteinaScelta;
         }
         ArrayList<Piatto> piattiFiltrati = filtraPerProteina(proteina);
