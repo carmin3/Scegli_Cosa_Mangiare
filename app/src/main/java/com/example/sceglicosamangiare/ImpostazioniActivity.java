@@ -30,5 +30,11 @@ public class ImpostazioniActivity extends AppCompatActivity {
             Intent intent = new Intent(ImpostazioniActivity.this, CalendarDbActionsActivity.class);
             startActivity(intent);
         });
+
+        TextView impostazioniDietaTV = findViewById(R.id.tv_impostazioni_dieta);
+        impostazioniDietaTV.setOnClickListener(v -> {
+            Intent intent = new Intent(ImpostazioniActivity.this, DietaBilanciataSettingsActivity.class);
+            startActivity(intent);
+        });
     }
 }

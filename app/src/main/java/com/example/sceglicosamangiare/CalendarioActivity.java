@@ -596,11 +596,14 @@ public class CalendarioActivity extends AppCompatActivity {
     }
 
     private String getWeightedRandomProteina() {
+        WeightManager weightManager = new WeightManager(this);
         SceltaCasualeTipoProteina<String> itemDrops = new SceltaCasualeTipoProteina<>();
-        itemDrops.addEntry("Carne Rossa", 5.0);
-        itemDrops.addEntry("Carne Bianca", 20.0);
-        itemDrops.addEntry("Pesce", 45.0);
-        itemDrops.addEntry("Vegetariano", 20.0);
+        
+        itemDrops.addEntry("Carne Rossa", (double) weightManager.getWeight(WeightManager.KEY_CARNE_ROSSA));
+        itemDrops.addEntry("Carne Bianca", (double) weightManager.getWeight(WeightManager.KEY_CARNE_BIANCA));
+        itemDrops.addEntry("Pesce", (double) weightManager.getWeight(WeightManager.KEY_PESCE));
+        itemDrops.addEntry("Vegetariano", (double) weightManager.getWeight(WeightManager.KEY_VEGETARIANO));
+        
         return itemDrops.getProteina();
     }
 

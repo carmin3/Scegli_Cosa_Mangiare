@@ -26,6 +26,14 @@
     <string name="calendario_pulito">Calendario pulito correttamente</string>
     <string name="pulizia_fallita">Errore durante la pulizia del calendario</string>
     <string name="impostazioni">IMPOSTAZIONI</string>
+    <string name="impostazioni_dieta_bilanciata">Impostazioni dieta Bilanciata</string>
+    <string name="dieta_bilanciata_title">DIETA BILANCIATA</string>
+    <string name="carne_rossa">Carne Rossa</string>
+    <string name="carne_bianca">Carne Bianca</string>
+    <string name="pesce">Pesce</string>
+    <string name="vegetariano">Vegetariano</string>
+    <string name="applica">Applica</string>
+    <string name="ripristina">Ripristina</string>
     <string name="proponimi_un_piatto">Proponimi un piatto!</string>
     <string name="aggiungi_ai_preferiti">AGGIUNGI AI PREFERITI</string>
     <string name="rimuovi_dai_preferiti">RIMUOVI DAI PREFERITI</string>

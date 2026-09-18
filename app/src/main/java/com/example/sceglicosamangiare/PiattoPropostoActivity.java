@@ -127,12 +127,13 @@ public class PiattoPropostoActivity extends AppCompatActivity {
     }
     private void sceltaCasualeProteina() {
         //Scelta del tipo di proteina per il piatto casuale
+        WeightManager weightManager = new WeightManager(this);
         SceltaCasualeTipoProteina<String> itemDrops = new SceltaCasualeTipoProteina<>();
 
-        itemDrops.addEntry("Carne Rossa",  1.0);
-        itemDrops.addEntry("Carne Bianca",   2.0);
-        itemDrops.addEntry("Pesce",  3.0);
-        itemDrops.addEntry("Vegetariano",   4.0);
+        itemDrops.addEntry("Carne Rossa",  (double) weightManager.getWeight(WeightManager.KEY_CARNE_ROSSA));
+        itemDrops.addEntry("Carne Bianca",   (double) weightManager.getWeight(WeightManager.KEY_CARNE_BIANCA));
+        itemDrops.addEntry("Pesce",  (double) weightManager.getWeight(WeightManager.KEY_PESCE));
+        itemDrops.addEntry("Vegetariano",   (double) weightManager.getWeight(WeightManager.KEY_VEGETARIANO));
         proteinaScelta = itemDrops.getProteina();
 
     }
