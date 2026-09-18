@@ -109,6 +109,38 @@
             app:layout_constraintStart_toEndOf="@+id/detailPortata"
             app:layout_constraintTop_toTopOf="@+id/detailPortata" />
 
+        <TextView
+            android:id="@+id/detailDominanza"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_pill"
+            android:gravity="center"
+            android:text="Dominanza"
+            android:textColor="@color/Verde_scuro"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/detailGusto"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/detailPortata" />
+
+        <TextView
+            android:id="@+id/detailGusto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_pill"
+            android:gravity="center"
+            android:text="Gusto"
+            android:textColor="@color/Verde_scuro"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/detailDominanza"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/detailDominanza"
+            app:layout_constraintTop_toTopOf="@+id/detailDominanza" />
+
         <Button
             android:id="@+id/btn_toggle_preferito"
             android:layout_width="wrap_content"
@@ -119,7 +151,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/detailNutrienti"
+            app:layout_constraintTop_toBottomOf="@+id/detailGusto"
             app:layout_constraintVertical_bias="0.100000024" />
 
         <Button

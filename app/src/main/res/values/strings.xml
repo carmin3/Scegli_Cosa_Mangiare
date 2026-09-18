@@ -16,6 +16,19 @@
         <item>Pesce</item>
         <item>Vegetariano</item>
     </string-array>
+    <string-array name="chedominanza">
+        <item>Che dominanza nutrizionale ha?</item>
+        <item>Carbo-Puro</item>
+        <item>Carbo-Proteico</item>
+        <item>Proteina-Pura</item>
+        <item>Fibre/Grassi</item>
+    </string-array>
+    <string-array name="chegusto">
+        <item>Che profilo gustativo ha?</item>
+        <item>Terra-Forte</item>
+        <item>Mare</item>
+        <item>Neutro/Orto</item>
+    </string-array>
 
     <string name="backup_ripristino">Backup e Ripristino ricette</string>
     <string name="backup_ripristino_calendario">Backup e Ripristino calendario</string>
@@ -52,4 +65,5 @@
     <string name="dont_show_again">non mostrare più</string>
     <string name="ok_capito">Ok, Capito</string>
     <string name="annulla">Annulla</string>
+    <string name="zero">0</string>
 </resources>

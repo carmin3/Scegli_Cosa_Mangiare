@@ -1,8 +1,10 @@
 package com.example.sceglicosamangiare;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class PiattoRepository {
     private final DataBaseHelper personal;
@@ -97,7 +99,7 @@ public class PiattoRepository {
         // else create override with favorite
         Piatto baseP = base.getBaseById(id);
         if (baseP == null) return false;
-        Piatto newP = new Piatto(-1, baseP.getNomePiatto(), baseP.getPortata(), baseP.getNutrienti(), true, value, id, false);
+        Piatto newP = new Piatto(-1, baseP.getNomePiatto(), baseP.getPortata(), baseP.getNutrienti(), baseP.getDominanzaNutrizionale(), baseP.getProfiloGustativo(), true, value, id, false);
         long nid = personal.insertPersonal(newP, id);
         return nid != -1;
     }
@@ -144,6 +146,105 @@ public class PiattoRepository {
         }
 
         if (filtered.isEmpty()) return null;
-        return filtered.get(new java.util.Random().nextInt(filtered.size()));
+        return filtered.get(new Random().nextInt(filtered.size()));
+    }
+
+    public Pasto generaPasto(String nutrienteScelto) {
+        Log.d("GenerazionePasto", "Inizio generazione per nutriente: " + nutrienteScelto);
+        Pasto pasto = new Pasto(nutrienteScelto);
+        ArrayList<Piatto> allData = getAllData();
+
+        // 1. Piatto Unico basato sul nutriente
+        ArrayList<Piatto> piattiUnici = new ArrayList<>();
+        for (Piatto p : allData) {
+            if (p.getPortata().equalsIgnoreCase("Piatto Unico") &&
+                    p.getNutrienti() != null && p.getNutrienti().equalsIgnoreCase(nutrienteScelto)) {
+                piattiUnici.add(p);
+            }
+        }
+        if (!piattiUnici.isEmpty()) {
+            Piatto pu = piattiUnici.get(new Random().nextInt(piattiUnici.size()));
+            pasto.setPiattoUnico(pu);
+            Log.d("GenerazionePasto", "Estratto Piatto Unico: " + pu.getNomePiatto());
+        }
+
+        // 2. Combo Primo + Secondo (almeno uno dei due basato sul nutriente scelto)
+        ArrayList<Piatto> piattiComboVincolo = new ArrayList<>();
+        for (Piatto p : allData) {
+            if ((p.getPortata().equalsIgnoreCase("Primo") || p.getPortata().equalsIgnoreCase("Secondo")) &&
+                    p.getNutrienti() != null && p.getNutrienti().equalsIgnoreCase(nutrienteScelto)) {
+                piattiComboVincolo.add(p);
+            }
+        }
+
+        if (!piattiComboVincolo.isEmpty()) {
+            Piatto vincolo = piattiComboVincolo.get(new Random().nextInt(piattiComboVincolo.size()));
+            Log.d("GenerazionePasto", "Piatto Vincolo estratto: " + vincolo.getNomePiatto() + " (" + vincolo.getPortata() + ", " + vincolo.getDominanzaNutrizionale() + ", " + vincolo.getProfiloGustativo() + ")");
+            if (vincolo.getPortata().equalsIgnoreCase("Primo")) {
+                pasto.setPrimo(vincolo);
+                pasto.setSecondo(pickCompatibleMissing(allData, "Secondo", vincolo));
+            } else {
+                pasto.setSecondo(vincolo);
+                pasto.setPrimo(pickCompatibleMissing(allData, "Primo", vincolo));
+            }
+            
+            if (pasto.getPrimo() != null && pasto.getSecondo() != null) {
+                Log.d("GenerazionePasto", "Combo completa: " + pasto.getPrimo().getNomePiatto() + " + " + pasto.getSecondo().getNomePiatto());
+            } else {
+                Log.w("GenerazionePasto", "Impossibile completare combo per vincolo: " + vincolo.getNomePiatto());
+            }
+
+            // 3. Contorno (compatibile con il profilo gustativo della combo)
+            pasto.setContorno(pickCompatibleContorno(allData, vincolo.getProfiloGustativo()));
+            if (pasto.getContorno() != null) {
+                Log.d("GenerazionePasto", "Contorno aggiunto: " + pasto.getContorno().getNomePiatto());
+            }
+        }
+
+        return pasto;
+    }
+
+    public Piatto pickCompatibleMissing(ArrayList<Piatto> all, String portataMancante, Piatto vincolo) {
+        ArrayList<Piatto> filtrati = new ArrayList<>();
+        String dominanzaCercata = "";
+        if (vincolo.getDominanzaNutrizionale() != null) {
+            if (vincolo.getDominanzaNutrizionale().equalsIgnoreCase("Carbo-Puro")) dominanzaCercata = "Proteina-Pura";
+            else if (vincolo.getDominanzaNutrizionale().equalsIgnoreCase("Proteina-Pura")) dominanzaCercata = "Carbo-Puro";
+        }
+
+        for (Piatto p : all) {
+            if (p.getPortata().equalsIgnoreCase(portataMancante)) {
+                // Filtro Nutrizionale
+                if (!dominanzaCercata.isEmpty() && (p.getDominanzaNutrizionale() == null || !p.getDominanzaNutrizionale().equalsIgnoreCase(dominanzaCercata))) continue;
+
+                // Filtro Gustativo
+                if (isGustoIncompatibile(vincolo.getProfiloGustativo(), p.getProfiloGustativo())) continue;
+
+                filtrati.add(p);
+            }
+        }
+        if (filtrati.isEmpty()) return null;
+        return filtrati.get(new Random().nextInt(filtrati.size()));
+    }
+
+    private Piatto pickCompatibleContorno(ArrayList<Piatto> all, String profiloVincolo) {
+        ArrayList<Piatto> filtrati = new ArrayList<>();
+        for (Piatto p : all) {
+            if (p.getPortata().equalsIgnoreCase("Contorno")) {
+                if (isGustoIncompatibile(profiloVincolo, p.getProfiloGustativo())) continue;
+                filtrati.add(p);
+            }
+        }
+        if (filtrati.isEmpty()) return null;
+        return filtrati.get(new Random().nextInt(filtrati.size()));
+    }
+
+    private boolean isGustoIncompatibile(String g1, String g2) {
+        if (g1 == null || g2 == null || g1.isEmpty() || g2.isEmpty()) return false;
+        if ((g1.equalsIgnoreCase("Terra-Forte") && g2.equalsIgnoreCase("Mare")) ||
+                (g1.equalsIgnoreCase("Mare") && g2.equalsIgnoreCase("Terra-Forte"))) {
+            return true;
+        }
+        return false;
     }
 }

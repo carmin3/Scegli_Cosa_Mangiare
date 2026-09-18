@@ -12,13 +12,15 @@ public class WeightManager {
     public static final String KEY_CARNE_ROSSA = "Carne Rossa";
     public static final String KEY_CARNE_BIANCA = "Carne Bianca";
     public static final String KEY_PESCE = "Pesce";
-    public static final String KEY_VEGETARIANO = "Vegetariano";
+    public static final String KEY_VEG = "Proteine Vegetali";
+    public static final String KEY_NEUTRO = "Neutro";
 
     // Valori di default basati sull'app attuale
     private static final float DEFAULT_ROSSA = 5.0f;
     private static final float DEFAULT_BIANCA = 20.0f;
     private static final float DEFAULT_PESCE = 45.0f;
     private static final float DEFAULT_VEG = 20.0f;
+    private static final float DEFAULT_NEUTRO = 10.0f;
 
     private final SharedPreferences prefs;
 
@@ -31,7 +33,8 @@ public class WeightManager {
         weights.put(KEY_CARNE_ROSSA, prefs.getFloat(KEY_CARNE_ROSSA, DEFAULT_ROSSA));
         weights.put(KEY_CARNE_BIANCA, prefs.getFloat(KEY_CARNE_BIANCA, DEFAULT_BIANCA));
         weights.put(KEY_PESCE, prefs.getFloat(KEY_PESCE, DEFAULT_PESCE));
-        weights.put(KEY_VEGETARIANO, prefs.getFloat(KEY_VEGETARIANO, DEFAULT_VEG));
+        weights.put(KEY_VEG, prefs.getFloat(KEY_VEG, DEFAULT_VEG));
+        weights.put(KEY_NEUTRO, prefs.getFloat(KEY_NEUTRO, DEFAULT_NEUTRO));
         return weights;
     }
 
@@ -52,7 +55,8 @@ public class WeightManager {
             case KEY_CARNE_ROSSA: return prefs.getFloat(KEY_CARNE_ROSSA, DEFAULT_ROSSA);
             case KEY_CARNE_BIANCA: return prefs.getFloat(KEY_CARNE_BIANCA, DEFAULT_BIANCA);
             case KEY_PESCE: return prefs.getFloat(KEY_PESCE, DEFAULT_PESCE);
-            case KEY_VEGETARIANO: return prefs.getFloat(KEY_VEGETARIANO, DEFAULT_VEG);
+            case KEY_VEG: return prefs.getFloat(KEY_VEG, DEFAULT_VEG);
+            case KEY_NEUTRO: return prefs.getFloat(KEY_NEUTRO, DEFAULT_NEUTRO);
             default: return 0f;
         }
     }

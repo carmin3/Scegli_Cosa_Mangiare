@@ -21,10 +21,9 @@ import android.widget.ImageButton;
 public class PiattoPropostoActivity extends AppCompatActivity {
 
     private PiattoRepository repo;
-    private ArrayList<Piatto> listaPiatti;
     private String proteinaScelta;
     private Spinner proteinaSpinner;
-    private final List<String> opzioniProteina = Arrays.asList("Dieta Bilanciata", "Carne Bianca", "Pesce", "Carne Rossa", "Vegetariano");
+    private final List<String> opzioniProteina = Arrays.asList("Dieta Bilanciata", "Carne Bianca", "Pesce", "Carne Rossa", "Proteine Vegetali", "Neutro");
 
     private Piatto currentPrimo;
     private Piatto currentSecondo;
@@ -37,7 +36,6 @@ public class PiattoPropostoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_piatto_proposto);
 
         repo = new PiattoRepository(PiattoPropostoActivity.this);
-        listaPiatti = repo.getAllData();
 
         setupSpinner();
         
@@ -90,64 +88,48 @@ public class PiattoPropostoActivity extends AppCompatActivity {
         if (proteina.equalsIgnoreCase("Dieta Bilanciata")) {
             proteina = proteinaScelta;
         }
-        ArrayList<Piatto> piattiFiltrati = filtraPerProteina(proteina);
-        Piatto nuovoPiatto = pickRandomByPortata(piattiFiltrati, portata);
-        updateDishUI(viewId, nuovoPiatto);
-    }
 
-    private ArrayList<Piatto> filtraPerProteina(String proteina) {
-        ArrayList<Piatto> filtrati = new ArrayList<>();
-        String proteinaLower = proteina.toLowerCase();
-        if (listaPiatti != null) {
-            for (Piatto p : listaPiatti) {
-                if (p != null && p.getNutrienti() != null && p.getNutrienti().toLowerCase().contains(proteinaLower)) {
-                    filtrati.add(p);
-                }
-            }
-        }
-        return filtrati;
+        Pasto pastoNuovo = repo.generaPasto(proteina);
+        Piatto nuovoPiatto = null;
+        if (portata.equalsIgnoreCase("Primo")) nuovoPiatto = pastoNuovo.getPrimo();
+        else if (portata.equalsIgnoreCase("Secondo")) nuovoPiatto = pastoNuovo.getSecondo();
+        else if (portata.equalsIgnoreCase("Contorno")) nuovoPiatto = pastoNuovo.getContorno();
+        else if (portata.equalsIgnoreCase("Piatto Unico")) nuovoPiatto = pastoNuovo.getPiattoUnico();
+
+        updateDishUI(viewId, nuovoPiatto);
     }
 
     private void refreshAllDishes(String proteina) {
         TextView infoTv = findViewById(R.id.infoNutrienteTV);
         if (infoTv != null) {
-            if (proteina.equalsIgnoreCase("Vegetariano")) {
-                infoTv.setText("Il menù è vegetariano");
+            if (proteina.equalsIgnoreCase("Proteine Vegetali")) {
+                infoTv.setText("Il menù è a base di proteine vegetali");
+            } else if (proteina.equalsIgnoreCase("Neutro")) {
+                infoTv.setText("Il menù è neutro");
             } else {
                 infoTv.setText("Il menù è a base di " + proteina.toLowerCase());
             }
         }
 
-        ArrayList<Piatto> piattiConProteina = filtraPerProteina(proteina);
+        Pasto pasto = repo.generaPasto(proteina);
 
-        updateDishUI(R.id.primoPropostoTV, pickRandomByPortata(piattiConProteina, "Primo"));
-        updateDishUI(R.id.secondoPropostoTV, pickRandomByPortata(piattiConProteina, "Secondo"));
-        updateDishUI(R.id.piattoUnicoPropostoTV, pickRandomByPortata(piattiConProteina, "Piatto Unico"));
-        updateDishUI(R.id.contornoPropostoTV, pickRandomByPortata(listaPiatti, "Contorno"));
+        updateDishUI(R.id.primoPropostoTV, pasto.getPrimo());
+        updateDishUI(R.id.secondoPropostoTV, pasto.getSecondo());
+        updateDishUI(R.id.piattoUnicoPropostoTV, pasto.getPiattoUnico());
+        updateDishUI(R.id.contornoPropostoTV, pasto.getContorno());
     }
+
     private void sceltaCasualeProteina() {
         //Scelta del tipo di proteina per il piatto casuale
         WeightManager weightManager = new WeightManager(this);
         SceltaCasualeTipoProteina<String> itemDrops = new SceltaCasualeTipoProteina<>();
 
-        itemDrops.addEntry("Carne Rossa",  (double) weightManager.getWeight(WeightManager.KEY_CARNE_ROSSA));
-        itemDrops.addEntry("Carne Bianca",   (double) weightManager.getWeight(WeightManager.KEY_CARNE_BIANCA));
-        itemDrops.addEntry("Pesce",  (double) weightManager.getWeight(WeightManager.KEY_PESCE));
-        itemDrops.addEntry("Vegetariano",   (double) weightManager.getWeight(WeightManager.KEY_VEGETARIANO));
+        itemDrops.addEntry("Carne Rossa", weightManager.getWeight(WeightManager.KEY_CARNE_ROSSA));
+        itemDrops.addEntry("Carne Bianca", weightManager.getWeight(WeightManager.KEY_CARNE_BIANCA));
+        itemDrops.addEntry("Pesce", weightManager.getWeight(WeightManager.KEY_PESCE));
+        itemDrops.addEntry("Proteine Vegetali", weightManager.getWeight(WeightManager.KEY_VEG));
+        itemDrops.addEntry("Neutro", weightManager.getWeight(WeightManager.KEY_NEUTRO));
         proteinaScelta = itemDrops.getProteina();
-
-    }
-
-    private Piatto pickRandomByPortata(ArrayList<Piatto> source, String portata) {
-        if (source == null) return null;
-        ArrayList<Piatto> filtered = new ArrayList<>();
-        for (Piatto p : source) {
-            if (p.getPortata() != null && p.getPortata().equalsIgnoreCase(portata)) {
-                filtered.add(p);
-            }
-        }
-        if (filtered.isEmpty()) return null;
-        return filtered.get(new Random().nextInt(filtered.size()));
     }
 
     private void updateDishUI(int viewId, Piatto piatto) {

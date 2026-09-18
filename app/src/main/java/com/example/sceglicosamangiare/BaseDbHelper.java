@@ -32,7 +32,33 @@ public class BaseDbHelper {
     private void ensureCopied() {
         try {
             if (!destFile.getParentFile().exists()) destFile.getParentFile().mkdirs();
-            if (!destFile.exists()) {
+            
+            boolean schemaOutdated = false;
+            if (destFile.exists()) {
+                // Check if new columns exist
+                SQLiteDatabase db = SQLiteDatabase.openDatabase(destFile.getPath(), null, SQLiteDatabase.OPEN_READONLY);
+                Cursor cursor = db.rawQuery("PRAGMA table_info(PIATTO_TABLE)", null);
+                boolean hasDominanza = false;
+                while (cursor.moveToNext()) {
+                    String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+                    if ("DOMINANZA_NUTRIZIONALE".equalsIgnoreCase(name)) hasDominanza = true;
+                }
+                cursor.close();
+                db.close();
+                if (!hasDominanza) schemaOutdated = true;
+                
+                // Also check if table is empty
+                db = SQLiteDatabase.openDatabase(destFile.getPath(), null, SQLiteDatabase.OPEN_READONLY);
+                Cursor countCursor = db.rawQuery("SELECT COUNT(*) FROM PIATTO_TABLE", null);
+                if (countCursor.moveToFirst()) {
+                    if (countCursor.getInt(0) == 0) schemaOutdated = true;
+                }
+                countCursor.close();
+                db.close();
+            }
+
+            if (!destFile.exists() || schemaOutdated) {
+                if (schemaOutdated) Log.i("BaseDbHelper", "Schema outdated, re-importing base database...");
                 // create DB by executing SQL in assets/base_seed.sql if present
                 try {
                     InputStream is = ctx.getAssets().open("base_seed.sql");
@@ -70,14 +96,20 @@ public class BaseDbHelper {
         try {
             if (c.moveToFirst()) {
                 do {
-                    int id = c.getInt(c.getColumnIndex("ID"));
-                    String nome = c.getString(c.getColumnIndex("NOME_PIATTO"));
-                    String portata = c.getString(c.getColumnIndex("PORTATA_PIATTO"));
-                    String nutrienti = c.getString(c.getColumnIndex("NUTRIENTI_PIATTO"));
+                    int id = c.getInt(c.getColumnIndexOrThrow("ID"));
+                    String nome = c.getString(c.getColumnIndexOrThrow("NOME_PIATTO"));
+                    String portata = c.getString(c.getColumnIndexOrThrow("PORTATA_PIATTO"));
+                    String nutrienti = c.getString(c.getColumnIndexOrThrow("NUTRIENTI_PIATTO"));
+                    String dominanza = "";
+                    int domIdx = c.getColumnIndex("DOMINANZA_NUTRIZIONALE");
+                    if (domIdx >= 0) dominanza = c.getString(domIdx);
+                    String profilo = "";
+                    int profIdx = c.getColumnIndex("PROFILO_GUSTATIVO");
+                    if (profIdx >= 0) profilo = c.getString(profIdx);
                     boolean favorito = false;
                     int favIdx = c.getColumnIndex("FAVORITO");
                     if (favIdx >= 0) favorito = c.getInt(favIdx) == 1;
-                    Piatto p = new Piatto(id, nome, portata, nutrienti, false, favorito, null, false);
+                    Piatto p = new Piatto(id, nome, portata, nutrienti, dominanza, profilo, false, favorito, null, false);
                     list.add(p);
                 } while (c.moveToNext());
             }
@@ -93,13 +125,19 @@ public class BaseDbHelper {
         Cursor c = db.rawQuery("SELECT * FROM PIATTO_TABLE WHERE ID = ?", new String[]{String.valueOf(id)});
         try {
             if (c.moveToFirst()) {
-                String nome = c.getString(c.getColumnIndex("NOME_PIATTO"));
-                String portata = c.getString(c.getColumnIndex("PORTATA_PIATTO"));
-                String nutrienti = c.getString(c.getColumnIndex("NUTRIENTI_PIATTO"));
+                String nome = c.getString(c.getColumnIndexOrThrow("NOME_PIATTO"));
+                String portata = c.getString(c.getColumnIndexOrThrow("PORTATA_PIATTO"));
+                String nutrienti = c.getString(c.getColumnIndexOrThrow("NUTRIENTI_PIATTO"));
+                String dominanza = "";
+                int domIdx = c.getColumnIndex("DOMINANZA_NUTRIZIONALE");
+                if (domIdx >= 0) dominanza = c.getString(domIdx);
+                String profilo = "";
+                int profIdx = c.getColumnIndex("PROFILO_GUSTATIVO");
+                if (profIdx >= 0) profilo = c.getString(profIdx);
                 boolean favorito = false;
                 int favIdx = c.getColumnIndex("FAVORITO");
                 if (favIdx >= 0) favorito = c.getInt(favIdx) == 1;
-                return new Piatto(id, nome, portata, nutrienti, false, favorito, null, false);
+                return new Piatto(id, nome, portata, nutrienti, dominanza, profilo, false, favorito, null, false);
             }
         } finally {
             if (c != null && !c.isClosed()) c.close();

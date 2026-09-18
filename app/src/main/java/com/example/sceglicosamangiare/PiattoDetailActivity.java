@@ -176,10 +176,14 @@ public class PiattoDetailActivity extends AppCompatActivity {
         TextView nomeTV = findViewById(R.id.detailNome);
         TextView portataTV = findViewById(R.id.detailPortata);
         TextView nutrientiTV = findViewById(R.id.detailNutrienti);
+        TextView domTV = findViewById(R.id.detailDominanza);
+        TextView gustoTV = findViewById(R.id.detailGusto);
 
         if (nomeTV != null) nomeTV.setText(current.getNomePiatto());
         if (portataTV != null) portataTV.setText(current.getPortata());
         if (nutrientiTV != null) nutrientiTV.setText(current.getNutrienti());
+        if (domTV != null) domTV.setText(current.getDominanzaNutrizionale());
+        if (gustoTV != null) gustoTV.setText(current.getProfiloGustativo());
 
         if (btnTogglePreferito != null) {
             boolean favorito = current.getFavorito() != null && current.getFavorito();

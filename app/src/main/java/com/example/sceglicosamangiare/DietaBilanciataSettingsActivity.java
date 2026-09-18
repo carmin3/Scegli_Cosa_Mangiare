@@ -20,7 +20,6 @@ public class DietaBilanciataSettingsActivity extends AppCompatActivity {
     private TextView tvValueRossa, tvValueBianca, tvValuePesce, tvValueVeg;
     private Button btnApplica, btnRipristina;
     private WeightManager weightManager;
-    private boolean isModified = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +49,7 @@ public class DietaBilanciataSettingsActivity extends AppCompatActivity {
 
         ImageButton homeBtn = findViewById(R.id.homeBtn);
         homeBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(DietaBilanciataSettingsActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
         });
@@ -62,9 +61,8 @@ public class DietaBilanciataSettingsActivity extends AppCompatActivity {
         updateSeekBar(seekBarRossa, tvValueRossa, weights.get(WeightManager.KEY_CARNE_ROSSA));
         updateSeekBar(seekBarBianca, tvValueBianca, weights.get(WeightManager.KEY_CARNE_BIANCA));
         updateSeekBar(seekBarPesce, tvValuePesce, weights.get(WeightManager.KEY_PESCE));
-        updateSeekBar(seekBarVeg, tvValueVeg, weights.get(WeightManager.KEY_VEGETARIANO));
+        updateSeekBar(seekBarVeg, tvValueVeg, weights.get(WeightManager.KEY_VEG));
         
-        isModified = false;
         btnApplica.setVisibility(View.GONE);
     }
 
@@ -84,7 +82,6 @@ public class DietaBilanciataSettingsActivity extends AppCompatActivity {
                     else if (seekBar == seekBarPesce) tvValuePesce.setText(String.valueOf(progress));
                     else if (seekBar == seekBarVeg) tvValueVeg.setText(String.valueOf(progress));
                     
-                    isModified = true;
                     btnApplica.setVisibility(View.VISIBLE);
                 }
             }
@@ -103,10 +100,12 @@ public class DietaBilanciataSettingsActivity extends AppCompatActivity {
             weights.put(WeightManager.KEY_CARNE_ROSSA, (float) seekBarRossa.getProgress());
             weights.put(WeightManager.KEY_CARNE_BIANCA, (float) seekBarBianca.getProgress());
             weights.put(WeightManager.KEY_PESCE, (float) seekBarPesce.getProgress());
-            weights.put(WeightManager.KEY_VEGETARIANO, (float) seekBarVeg.getProgress());
+            weights.put(WeightManager.KEY_VEG, (float) seekBarVeg.getProgress());
+
+            // Add neutral weight to preserve it
+            weights.put(WeightManager.KEY_NEUTRO, weightManager.getWeight(WeightManager.KEY_NEUTRO));
 
             weightManager.saveWeights(weights);
-            isModified = false;
             btnApplica.setVisibility(View.GONE);
             Toast.makeText(this, "Impostazioni salvate", Toast.LENGTH_SHORT).show();
         });

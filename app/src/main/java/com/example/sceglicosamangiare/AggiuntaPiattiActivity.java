@@ -34,6 +34,8 @@ public class AggiuntaPiattiActivity extends AppCompatActivity {
         final EditText TVnomeinput = findViewById(R.id.nomeInput);
         final Spinner spinnerPortata = findViewById(R.id.spinnerPortata);
         final Spinner spinnerNutrienti = findViewById(R.id.spinnerNutrienti);
+        final Spinner spinnerDominanza = findViewById(R.id.spinnerDominanza);
+        final Spinner spinnerGusto = findViewById(R.id.spinnerGusto);
         Button salvaBtn = findViewById(R.id.salvaBtn);
 
         // if editing load values
@@ -56,6 +58,24 @@ public class AggiuntaPiattiActivity extends AppCompatActivity {
                         Object it = spinnerNutrienti.getItemAtPosition(i);
                         if (it != null && it.toString().equalsIgnoreCase(p.getNutrienti())) {
                             spinnerNutrienti.setSelection(i);
+                            break;
+                        }
+                    }
+                }
+                if (spinnerDominanza != null && p.getDominanzaNutrizionale() != null) {
+                    for (int i = 0; i < spinnerDominanza.getCount(); i++) {
+                        Object it = spinnerDominanza.getItemAtPosition(i);
+                        if (it != null && it.toString().equalsIgnoreCase(p.getDominanzaNutrizionale())) {
+                            spinnerDominanza.setSelection(i);
+                            break;
+                        }
+                    }
+                }
+                if (spinnerGusto != null && p.getProfiloGustativo() != null) {
+                    for (int i = 0; i < spinnerGusto.getCount(); i++) {
+                        Object it = spinnerGusto.getItemAtPosition(i);
+                        if (it != null && it.toString().equalsIgnoreCase(p.getProfiloGustativo())) {
+                            spinnerGusto.setSelection(i);
                             break;
                         }
                     }
@@ -88,12 +108,24 @@ public class AggiuntaPiattiActivity extends AppCompatActivity {
                     return;
                 }
 
+                String spinnerDominanzaValue = (spinnerDominanza != null && spinnerDominanza.getSelectedItem() != null) ? spinnerDominanza.getSelectedItem().toString() : "";
+                if (spinnerDominanzaValue.equalsIgnoreCase("Che dominanza nutrizionale ha?")) {
+                    Toast.makeText(AggiuntaPiattiActivity.this, "inserirsci che dominanza ha", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                String spinnerGustoValue = (spinnerGusto != null && spinnerGusto.getSelectedItem() != null) ? spinnerGusto.getSelectedItem().toString() : "";
+                if (spinnerGustoValue.equalsIgnoreCase("Che profilo gustativo ha?")) {
+                    Toast.makeText(AggiuntaPiattiActivity.this, "inserirsci che gusto ha", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 if (editingId >= 0) {
                     if (repo.existsByNameAndPortata(nomePiattoNew, spinnerPortataValue, editingId)) {
                         Toast.makeText(AggiuntaPiattiActivity.this, "Esiste già un piatto con questo nome e portata", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    Piatto p = new Piatto(editingId, nomePiattoNew, spinnerPortataValue, spinnerNutrientiValue, Boolean.TRUE);
+                    Piatto p = new Piatto(editingId, nomePiattoNew, spinnerPortataValue, spinnerNutrientiValue, spinnerDominanzaValue, spinnerGustoValue, Boolean.TRUE, false, null, false);
                     boolean ok = repo.updateOne(p);
                     if (ok) {
                         Toast.makeText(AggiuntaPiattiActivity.this, "Piatto aggiornato", Toast.LENGTH_SHORT).show();
@@ -108,7 +140,7 @@ public class AggiuntaPiattiActivity extends AppCompatActivity {
                         Toast.makeText(AggiuntaPiattiActivity.this, "Esiste già un piatto con questo nome e portata", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    Piatto piatto = new Piatto(-1, nomePiattoNew, spinnerPortataValue, spinnerNutrientiValue, Boolean.TRUE);
+                    Piatto piatto = new Piatto(-1, nomePiattoNew, spinnerPortataValue, spinnerNutrientiValue, spinnerDominanzaValue, spinnerGustoValue, Boolean.TRUE, false, null, false);
                     boolean success = repo.addOne(piatto);
 
                     if (success) {

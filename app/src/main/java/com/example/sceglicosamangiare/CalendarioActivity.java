@@ -62,7 +62,7 @@ public class CalendarioActivity extends AppCompatActivity {
     private ImageButton btnActionCPrimo, btnActionCSecondo, btnActionCContorno, btnActionCPiattoUnico;
     private TextView editDateTV;
     private ListPopupWindow popupWindow;
-    private String[] proteine = {"Dieta Bilanciata", "Carne Rossa", "Carne Bianca", "Pesce", "Vegetariano"};
+    private String[] proteine = {"Dieta Bilanciata", "Carne Rossa", "Carne Bianca", "Pesce", "Proteine Vegetali", "Neutro"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -569,13 +569,11 @@ public class CalendarioActivity extends AppCompatActivity {
             setSpinnerSelection(spinnerProtPranzo, proteinaPranzo);
         }
 
-        Piatto pP1 = repository.pickRandomByPortataAndProteina("Primo", proteinaPranzo);
-        Piatto pP2 = repository.pickRandomByPortataAndProteina("Secondo", proteinaPranzo);
-        Piatto pP3 = repository.pickRandomByPortataAndProteina("Contorno", proteinaPranzo);
-
-        if (pP1 != null) setDishSelectedState(etPranzoPrimo, btnActionPPrimo, pP1);
-        if (pP2 != null) setDishSelectedState(etPranzoSecondo, btnActionPSecondo, pP2);
-        if (pP3 != null) setDishSelectedState(etPranzoContorno, btnActionPContorno, pP3);
+        Pasto pastoPranzo = repository.generaPasto(proteinaPranzo);
+        if (pastoPranzo.getPrimo() != null) setDishSelectedState(etPranzoPrimo, btnActionPPrimo, pastoPranzo.getPrimo());
+        if (pastoPranzo.getSecondo() != null) setDishSelectedState(etPranzoSecondo, btnActionPSecondo, pastoPranzo.getSecondo());
+        if (pastoPranzo.getPiattoUnico() != null) setDishSelectedState(etPranzoPiattoUnico, btnActionPPiattoUnico, pastoPranzo.getPiattoUnico());
+        if (pastoPranzo.getContorno() != null) setDishSelectedState(etPranzoContorno, btnActionPContorno, pastoPranzo.getContorno());
 
         // --- CENA ---
         String proteinaCena = spinnerProtCena.getSelectedItem().toString();
@@ -584,13 +582,11 @@ public class CalendarioActivity extends AppCompatActivity {
             setSpinnerSelection(spinnerProtCena, proteinaCena);
         }
 
-        Piatto cP1 = repository.pickRandomByPortataAndProteina("Primo", proteinaCena);
-        Piatto cP2 = repository.pickRandomByPortataAndProteina("Secondo", proteinaCena);
-        Piatto cP3 = repository.pickRandomByPortataAndProteina("Contorno", proteinaCena);
-
-        if (cP1 != null) setDishSelectedState(etCenaPrimo, btnActionCPrimo, cP1);
-        if (cP2 != null) setDishSelectedState(etCenaSecondo, btnActionCSecondo, cP2);
-        if (cP3 != null) setDishSelectedState(etCenaContorno, btnActionCContorno, cP3);
+        Pasto pastoCena = repository.generaPasto(proteinaCena);
+        if (pastoCena.getPrimo() != null) setDishSelectedState(etCenaPrimo, btnActionCPrimo, pastoCena.getPrimo());
+        if (pastoCena.getSecondo() != null) setDishSelectedState(etCenaSecondo, btnActionCSecondo, pastoCena.getSecondo());
+        if (pastoCena.getPiattoUnico() != null) setDishSelectedState(etCenaPiattoUnico, btnActionCPiattoUnico, pastoCena.getPiattoUnico());
+        if (pastoCena.getContorno() != null) setDishSelectedState(etCenaContorno, btnActionCContorno, pastoCena.getContorno());
 
         Toast.makeText(this, "Menù generato!", Toast.LENGTH_SHORT).show();
     }
@@ -599,10 +595,11 @@ public class CalendarioActivity extends AppCompatActivity {
         WeightManager weightManager = new WeightManager(this);
         SceltaCasualeTipoProteina<String> itemDrops = new SceltaCasualeTipoProteina<>();
         
-        itemDrops.addEntry("Carne Rossa", (double) weightManager.getWeight(WeightManager.KEY_CARNE_ROSSA));
-        itemDrops.addEntry("Carne Bianca", (double) weightManager.getWeight(WeightManager.KEY_CARNE_BIANCA));
-        itemDrops.addEntry("Pesce", (double) weightManager.getWeight(WeightManager.KEY_PESCE));
-        itemDrops.addEntry("Vegetariano", (double) weightManager.getWeight(WeightManager.KEY_VEGETARIANO));
+        itemDrops.addEntry("Carne Rossa", weightManager.getWeight(WeightManager.KEY_CARNE_ROSSA));
+        itemDrops.addEntry("Carne Bianca", weightManager.getWeight(WeightManager.KEY_CARNE_BIANCA));
+        itemDrops.addEntry("Pesce", weightManager.getWeight(WeightManager.KEY_PESCE));
+        itemDrops.addEntry("Proteine Vegetali", weightManager.getWeight(WeightManager.KEY_VEG));
+        itemDrops.addEntry("Neutro", weightManager.getWeight(WeightManager.KEY_NEUTRO));
         
         return itemDrops.getProteina();
     }
@@ -633,9 +630,21 @@ public class CalendarioActivity extends AppCompatActivity {
         btn.setOnClickListener(v -> {
             if (et.isEnabled()) {
                 String proteina = spinner.getSelectedItem().toString();
-                Piatto p = repository.pickRandomByPortataAndProteina(portata, proteina);
-                if (p != null) {
-                    setDishSelectedState(et, btn, p);
+                if (proteina.equalsIgnoreCase("Dieta Bilanciata")) {
+                    // For single refresh we can't easily guess the weighted nutrient intended without picking it
+                    // Let's just pick one if not set
+                    proteina = getWeightedRandomProteina();
+                }
+
+                Pasto p = repository.generaPasto(proteina);
+                Piatto scelto = null;
+                if (portata.equalsIgnoreCase("Primo")) scelto = p.getPrimo();
+                else if (portata.equalsIgnoreCase("Secondo")) scelto = p.getSecondo();
+                else if (portata.equalsIgnoreCase("Contorno")) scelto = p.getContorno();
+                else if (portata.equalsIgnoreCase("Piatto Unico")) scelto = p.getPiattoUnico();
+
+                if (scelto != null) {
+                    setDishSelectedState(et, btn, scelto);
                 } else {
                     Toast.makeText(this, "Nessun piatto trovato", Toast.LENGTH_SHORT).show();
                 }

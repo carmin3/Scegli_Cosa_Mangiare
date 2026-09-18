@@ -27,7 +27,7 @@
             android:scaleX="0.8"
             android:scaleY="0.8"
             android:src="@drawable/home_icon"
-            android:tint="@color/Verde_scuro" />
+            app:tint="@color/Verde_scuro" />
 
 
         <TextView
@@ -54,7 +54,7 @@
             android:scaleX="0.8"
             android:scaleY="0.8"
             android:src="@drawable/list_icon"
-            android:tint="@color/Verde_scuro" />
+            app:tint="@color/Verde_scuro" />
 
     </RelativeLayout>
 
@@ -112,6 +112,30 @@
             app:layout_constraintTop_toBottomOf="@id/spinnerPortata"
             app:layout_constraintVertical_bias="0.0" />
 
+        <Spinner
+            android:id="@+id/spinnerDominanza"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:entries="@array/chedominanza"
+            android:gravity="start"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/spinnerPortata"
+            app:layout_constraintTop_toBottomOf="@id/spinnerNutrienti"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <Spinner
+            android:id="@+id/spinnerGusto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:entries="@array/chegusto"
+            android:gravity="start"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/spinnerPortata"
+            app:layout_constraintTop_toBottomOf="@id/spinnerDominanza"
+            app:layout_constraintVertical_bias="0.0" />
+
         <Button
             android:id="@+id/salvaBtn"
             android:layout_width="wrap_content"
@@ -123,8 +147,8 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/spinnerNutrienti"
-            app:layout_constraintVertical_bias="0.199" />
+            app:layout_constraintTop_toBottomOf="@id/spinnerGusto"
+            app:layout_constraintVertical_bias="0.1" />
 
         <ListView
             android:id="@+id/LV_db"

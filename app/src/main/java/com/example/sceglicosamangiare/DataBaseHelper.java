@@ -31,6 +31,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_FAVORITO = "FAVORITO";
     public static final String COLUMN_BASE_ID = "BASE_ID";
     public static final String COLUMN_TOMBSTONE = "TOMBSTONE";
+    public static final String COLUMN_DOMINANZA_NUTRIZIONALE = "DOMINANZA_NUTRIZIONALE";
+    public static final String COLUMN_PROFILO_GUSTATIVO = "PROFILO_GUSTATIVO";
 
     // Nuova tabella Piano Pasto
     public static final String PIANO_PASTO_TABLE = "PIANO_PASTO_TABLE";
@@ -47,7 +49,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_CENA_PIATTO_UNICO = "C4";
 
     public DataBaseHelper(@Nullable Context context) {
-        super(context, "personal.DB", null, 5);
+        super(context, "personal.DB", null, 6);
     }
 
     @Override
@@ -55,7 +57,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         String createTableStatement = "CREATE TABLE " + PIATTO_TABLE + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + COLUMN_NOME_PIATTO + " TEXT, " + COLUMN_PORTATA_PIATTO + " TEXT, "
                 + COLUMN_NUTRIENTI_PIATTO + " TEXT, " + COLUMN_PERSONALI + " INTEGER DEFAULT 0, " + COLUMN_FAVORITO + " INTEGER DEFAULT 0, "
-                + COLUMN_BASE_ID + " INTEGER, " + COLUMN_TOMBSTONE + " INTEGER DEFAULT 0)";
+                + COLUMN_BASE_ID + " INTEGER, " + COLUMN_TOMBSTONE + " INTEGER DEFAULT 0, "
+                + COLUMN_DOMINANZA_NUTRIZIONALE + " TEXT, " + COLUMN_PROFILO_GUSTATIVO + " TEXT)";
         db.execSQL(createTableStatement);
 
         String createPianoPastoTable = "CREATE TABLE " + PIANO_PASTO_TABLE + " ("
@@ -92,6 +95,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         if (oldVersion < 5) {
             try { db.execSQL("ALTER TABLE " + PIANO_PASTO_TABLE + " ADD COLUMN " + COLUMN_PRANZO_PIATTO_UNICO + " TEXT"); } catch (Exception ignored) {}
             try { db.execSQL("ALTER TABLE " + PIANO_PASTO_TABLE + " ADD COLUMN " + COLUMN_CENA_PIATTO_UNICO + " TEXT"); } catch (Exception ignored) {}
+        }
+        if (oldVersion < 6) {
+            try {
+                db.execSQL("ALTER TABLE " + PIATTO_TABLE + " ADD COLUMN " + COLUMN_DOMINANZA_NUTRIZIONALE + " TEXT");
+                db.execSQL("ALTER TABLE " + PIATTO_TABLE + " ADD COLUMN " + COLUMN_PROFILO_GUSTATIVO + " TEXT");
+            } catch (Exception ignored) {}
         }
     }
 
@@ -144,17 +153,17 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     private PianoPasto getPianoFromCursor(Cursor c, String date) {
-        int dataIdx = c.getColumnIndex(COLUMN_DATA);
-        int protPIdx = c.getColumnIndex(COLUMN_PROT_PRANZO);
-        int p1Idx = c.getColumnIndex(COLUMN_PRANZO_PRIMO);
-        int p2Idx = c.getColumnIndex(COLUMN_PRANZO_SECONDO);
-        int p3Idx = c.getColumnIndex(COLUMN_PRANZO_CONTORNO);
-        int p4Idx = c.getColumnIndex(COLUMN_PRANZO_PIATTO_UNICO);
-        int protCIdx = c.getColumnIndex(COLUMN_PROT_CENA);
-        int c1Idx = c.getColumnIndex(COLUMN_CENA_PRIMO);
-        int c2Idx = c.getColumnIndex(COLUMN_CENA_SECONDO);
-        int c3Idx = c.getColumnIndex(COLUMN_CENA_CONTORNO);
-        int c4Idx = c.getColumnIndex(COLUMN_CENA_PIATTO_UNICO);
+        int dataIdx = c.getColumnIndexOrThrow(COLUMN_DATA);
+        int protPIdx = c.getColumnIndexOrThrow(COLUMN_PROT_PRANZO);
+        int p1Idx = c.getColumnIndexOrThrow(COLUMN_PRANZO_PRIMO);
+        int p2Idx = c.getColumnIndexOrThrow(COLUMN_PRANZO_SECONDO);
+        int p3Idx = c.getColumnIndexOrThrow(COLUMN_PRANZO_CONTORNO);
+        int p4Idx = c.getColumnIndexOrThrow(COLUMN_PRANZO_PIATTO_UNICO);
+        int protCIdx = c.getColumnIndexOrThrow(COLUMN_PROT_CENA);
+        int c1Idx = c.getColumnIndexOrThrow(COLUMN_CENA_PRIMO);
+        int c2Idx = c.getColumnIndexOrThrow(COLUMN_CENA_SECONDO);
+        int c3Idx = c.getColumnIndexOrThrow(COLUMN_CENA_CONTORNO);
+        int c4Idx = c.getColumnIndexOrThrow(COLUMN_CENA_PIATTO_UNICO);
 
         String rowDate = (dataIdx != -1) ? c.getString(dataIdx) : date;
         return new PianoPasto(
@@ -184,6 +193,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_NOME_PIATTO, piatto.getNomePiatto());
         cv.put(COLUMN_PORTATA_PIATTO, piatto.getPortata());
         cv.put(COLUMN_NUTRIENTI_PIATTO, piatto.getNutrienti());
+        cv.put(COLUMN_DOMINANZA_NUTRIZIONALE, piatto.getDominanzaNutrizionale());
+        cv.put(COLUMN_PROFILO_GUSTATIVO, piatto.getProfiloGustativo());
         cv.put(COLUMN_PERSONALI, 1);
         cv.put(COLUMN_FAVORITO, piatto.getFavorito() != null && piatto.getFavorito() ? 1 : 0);
         if (baseId != null) cv.put(COLUMN_BASE_ID, baseId);
@@ -198,6 +209,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_NOME_PIATTO, p.getNomePiatto());
         cv.put(COLUMN_PORTATA_PIATTO, p.getPortata());
         cv.put(COLUMN_NUTRIENTI_PIATTO, p.getNutrienti());
+        cv.put(COLUMN_DOMINANZA_NUTRIZIONALE, p.getDominanzaNutrizionale());
+        cv.put(COLUMN_PROFILO_GUSTATIVO, p.getProfiloGustativo());
         cv.put(COLUMN_PERSONALI, 1);
         cv.put(COLUMN_FAVORITO, p.getFavorito() != null && p.getFavorito() ? 1 : 0);
         int rows = db.update(PIATTO_TABLE, cv, COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
@@ -236,25 +249,29 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     private Piatto getPiattoFromCursor(Cursor c) {
-        int idIdx = c.getColumnIndex(COLUMN_ID);
-        int nomeIdx = c.getColumnIndex(COLUMN_NOME_PIATTO);
-        int portataIdx = c.getColumnIndex(COLUMN_PORTATA_PIATTO);
-        int nutrientiIdx = c.getColumnIndex(COLUMN_NUTRIENTI_PIATTO);
-        int persIdx = c.getColumnIndex(COLUMN_PERSONALI);
-        int favIdx = c.getColumnIndex(COLUMN_FAVORITO);
-        int baseIdx = c.getColumnIndex(COLUMN_BASE_ID);
-        int tombIdx = c.getColumnIndex(COLUMN_TOMBSTONE);
+        int idIdx = c.getColumnIndexOrThrow(COLUMN_ID);
+        int nomeIdx = c.getColumnIndexOrThrow(COLUMN_NOME_PIATTO);
+        int portataIdx = c.getColumnIndexOrThrow(COLUMN_PORTATA_PIATTO);
+        int nutrientiIdx = c.getColumnIndexOrThrow(COLUMN_NUTRIENTI_PIATTO);
+        int domIdx = c.getColumnIndexOrThrow(COLUMN_DOMINANZA_NUTRIZIONALE);
+        int profIdx = c.getColumnIndexOrThrow(COLUMN_PROFILO_GUSTATIVO);
+        int persIdx = c.getColumnIndexOrThrow(COLUMN_PERSONALI);
+        int favIdx = c.getColumnIndexOrThrow(COLUMN_FAVORITO);
+        int baseIdx = c.getColumnIndexOrThrow(COLUMN_BASE_ID);
+        int tombIdx = c.getColumnIndexOrThrow(COLUMN_TOMBSTONE);
 
         int id = (idIdx != -1) ? c.getInt(idIdx) : -1;
         String nome = (nomeIdx != -1) ? c.getString(nomeIdx) : "";
         String portata = (portataIdx != -1) ? c.getString(portataIdx) : "";
         String nutrienti = (nutrientiIdx != -1) ? c.getString(nutrientiIdx) : "";
+        String dominanza = (domIdx != -1) ? c.getString(domIdx) : "";
+        String profilo = (profIdx != -1) ? c.getString(profIdx) : "";
         boolean personale = (persIdx != -1) && c.getInt(persIdx) == 1;
         boolean favorito = (favIdx != -1) && c.getInt(favIdx) == 1;
         Integer baseId = (baseIdx != -1 && !c.isNull(baseIdx)) ? c.getInt(baseIdx) : null;
         boolean tombstone = (tombIdx != -1) && c.getInt(tombIdx) == 1;
 
-        return new Piatto(id, nome, portata, nutrienti, personale, favorito, baseId, tombstone);
+        return new Piatto(id, nome, portata, nutrienti, dominanza, profilo, personale, favorito, baseId, tombstone);
     }
 
     public ArrayList<Piatto> getAllPersonalNonTombstone() {
@@ -327,14 +344,16 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor c = db.rawQuery("SELECT * FROM " + PIATTO_TABLE, null);
         try {
             if (c != null && c.moveToFirst()) {
-                int idIdx = c.getColumnIndex(COLUMN_ID);
-                int nomeIdx = c.getColumnIndex(COLUMN_NOME_PIATTO);
-                int portataIdx = c.getColumnIndex(COLUMN_PORTATA_PIATTO);
-                int nutrientiIdx = c.getColumnIndex(COLUMN_NUTRIENTI_PIATTO);
-                int persIdx = c.getColumnIndex(COLUMN_PERSONALI);
-                int favIdx = c.getColumnIndex(COLUMN_FAVORITO);
-                int baseIdx = c.getColumnIndex(COLUMN_BASE_ID);
-                int tombIdx = c.getColumnIndex(COLUMN_TOMBSTONE);
+                int idIdx = c.getColumnIndexOrThrow(COLUMN_ID);
+                int nomeIdx = c.getColumnIndexOrThrow(COLUMN_NOME_PIATTO);
+                int portataIdx = c.getColumnIndexOrThrow(COLUMN_PORTATA_PIATTO);
+                int nutrientiIdx = c.getColumnIndexOrThrow(COLUMN_NUTRIENTI_PIATTO);
+                int domIdx = c.getColumnIndexOrThrow(COLUMN_DOMINANZA_NUTRIZIONALE);
+                int profIdx = c.getColumnIndexOrThrow(COLUMN_PROFILO_GUSTATIVO);
+                int persIdx = c.getColumnIndexOrThrow(COLUMN_PERSONALI);
+                int favIdx = c.getColumnIndexOrThrow(COLUMN_FAVORITO);
+                int baseIdx = c.getColumnIndexOrThrow(COLUMN_BASE_ID);
+                int tombIdx = c.getColumnIndexOrThrow(COLUMN_TOMBSTONE);
 
                 do {
                     JSONObject o = new JSONObject();
@@ -342,6 +361,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     o.put("nome", (nomeIdx != -1 && !c.isNull(nomeIdx)) ? c.getString(nomeIdx) : "");
                     o.put("portata", (portataIdx != -1 && !c.isNull(portataIdx)) ? c.getString(portataIdx) : "");
                     o.put("nutrienti", (nutrientiIdx != -1 && !c.isNull(nutrientiIdx)) ? c.getString(nutrientiIdx) : "");
+                    o.put("dominanza", (domIdx != -1 && !c.isNull(domIdx)) ? c.getString(domIdx) : "");
+                    o.put("profilo", (profIdx != -1 && !c.isNull(profIdx)) ? c.getString(profIdx) : "");
                     o.put("personale", (persIdx != -1) && c.getInt(persIdx) == 1);
                     if (favIdx != -1) o.put("favorito", c.getInt(favIdx) == 1);
                     if (baseIdx != -1 && !c.isNull(baseIdx)) o.put("base_id", c.getInt(baseIdx));
@@ -385,6 +406,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 String nome = o.optString("nome", "");
                 String portata = o.optString("portata", "");
                 String nutrienti = o.optString("nutrienti", "");
+                String dominanza = o.optString("dominanza", "");
+                String profilo = o.optString("profilo", "");
                 boolean favorito = o.optBoolean("favorito", false);
                 Integer baseId = null;
                 if (o.has("base_id")) baseId = o.optInt("base_id");
@@ -396,10 +419,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                         existing.setNomePiatto(nome);
                         existing.setPortata(portata);
                         existing.setNutrienti(nutrienti);
+                        existing.setDominanzaNutrizionale(dominanza);
+                        existing.setProfiloGustativo(profilo);
                         existing.setFavorito(favorito);
                         updatePersonalById(existing.getId(), existing);
                     } else {
-                        Piatto newP = new Piatto(-1, nome, portata, nutrienti, true, favorito, baseId, false);
+                        Piatto newP = new Piatto(-1, nome, portata, nutrienti, dominanza, profilo, true, favorito, baseId, false);
                         insertPersonal(newP, baseId);
                     }
                     processed++;
@@ -410,15 +435,17 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                         ex.setNomePiatto(nome);
                         ex.setPortata(portata);
                         ex.setNutrienti(nutrienti);
+                        ex.setDominanzaNutrizionale(dominanza);
+                        ex.setProfiloGustativo(profilo);
                         ex.setFavorito(favorito);
                         updatePersonalById(id, ex);
                     } else {
-                        Piatto newP = new Piatto(-1, nome, portata, nutrienti, true, favorito, null, false);
+                        Piatto newP = new Piatto(-1, nome, portata, nutrienti, dominanza, profilo, true, favorito, null, false);
                         insertPersonal(newP, null);
                     }
                     processed++;
                 } else {
-                    Piatto newP = new Piatto(-1, nome, portata, nutrienti, true, favorito, null, false);
+                    Piatto newP = new Piatto(-1, nome, portata, nutrienti, dominanza, profilo, true, favorito, null, false);
                     long nid = insertPersonal(newP, null);
                     if (nid != -1) processed++;
                 }
@@ -444,17 +471,17 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor c = db.rawQuery("SELECT * FROM " + PIANO_PASTO_TABLE, null);
         try {
             if (c != null && c.moveToFirst()) {
-                int dataIdx = c.getColumnIndex(COLUMN_DATA);
-                int protPIdx = c.getColumnIndex(COLUMN_PROT_PRANZO);
-                int p1Idx = c.getColumnIndex(COLUMN_PRANZO_PRIMO);
-                int p2Idx = c.getColumnIndex(COLUMN_PRANZO_SECONDO);
-                int p3Idx = c.getColumnIndex(COLUMN_PRANZO_CONTORNO);
-                int p4Idx = c.getColumnIndex(COLUMN_PRANZO_PIATTO_UNICO);
-                int protCIdx = c.getColumnIndex(COLUMN_PROT_CENA);
-                int c1Idx = c.getColumnIndex(COLUMN_CENA_PRIMO);
-                int c2Idx = c.getColumnIndex(COLUMN_CENA_SECONDO);
-                int c3Idx = c.getColumnIndex(COLUMN_CENA_CONTORNO);
-                int c4Idx = c.getColumnIndex(COLUMN_CENA_PIATTO_UNICO);
+                int dataIdx = c.getColumnIndexOrThrow(COLUMN_DATA);
+                int protPIdx = c.getColumnIndexOrThrow(COLUMN_PROT_PRANZO);
+                int p1Idx = c.getColumnIndexOrThrow(COLUMN_PRANZO_PRIMO);
+                int p2Idx = c.getColumnIndexOrThrow(COLUMN_PRANZO_SECONDO);
+                int p3Idx = c.getColumnIndexOrThrow(COLUMN_PRANZO_CONTORNO);
+                int p4Idx = c.getColumnIndexOrThrow(COLUMN_PRANZO_PIATTO_UNICO);
+                int protCIdx = c.getColumnIndexOrThrow(COLUMN_PROT_CENA);
+                int c1Idx = c.getColumnIndexOrThrow(COLUMN_CENA_PRIMO);
+                int c2Idx = c.getColumnIndexOrThrow(COLUMN_CENA_SECONDO);
+                int c3Idx = c.getColumnIndexOrThrow(COLUMN_CENA_CONTORNO);
+                int c4Idx = c.getColumnIndexOrThrow(COLUMN_CENA_PIATTO_UNICO);
 
                 do {
                     JSONObject o = new JSONObject();
