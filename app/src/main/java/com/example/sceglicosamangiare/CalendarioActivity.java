@@ -28,6 +28,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,8 +47,9 @@ public class CalendarioActivity extends AppCompatActivity {
     private ViewMode currentMode = ViewMode.DAILY;
     private GestureDetector gestureDetector;
 
-    private ScrollView dailyView, weeklyView;
-    private LinearLayout monthlyView, weeklyContainer;
+    private ScrollView dailyView;
+    private RecyclerView weeklyView;
+    private LinearLayout monthlyView;
     private ImageButton viewSwitchBtn, homeBtn;
     private TextView monthTitleTV;
     private GridView monthGridView;
@@ -77,11 +80,12 @@ public class CalendarioActivity extends AppCompatActivity {
         dailyView = findViewById(R.id.dailyView);
         weeklyView = findViewById(R.id.weeklyView);
         monthlyView = findViewById(R.id.monthlyView);
-        weeklyContainer = findViewById(R.id.weeklyContainer);
         viewSwitchBtn = findViewById(R.id.viewSwitchBtn);
         monthTitleTV = findViewById(R.id.monthTitleTV);
         monthGridView = findViewById(R.id.monthGridView);
         homeBtn = findViewById(R.id.homeBtn);
+
+        weeklyView.setLayoutManager(new LinearLayoutManager(this));
 
         editDateTV = findViewById(R.id.editDateTV);
         spinnerProtPranzo = findViewById(R.id.spinnerProtPranzo);
@@ -210,6 +214,9 @@ public class CalendarioActivity extends AppCompatActivity {
     }
 
     private void changeWeek(int weeks) {
+        if (weeklyView.getAdapter() == null) return;
+        WeeklyAdapter adapter = (WeeklyAdapter) weeklyView.getAdapter();
+        
         try {
             SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
             Date date = dbFormat.parse(selectedDate);
@@ -218,7 +225,8 @@ public class CalendarioActivity extends AppCompatActivity {
             cal.add(Calendar.WEEK_OF_YEAR, weeks);
             selectedDate = dbFormat.format(cal.getTime());
 
-            animateViewChange(weeklyView, weeks > 0, this::populateWeeklyView);
+            int targetPos = adapter.getPositionForDate(selectedDate);
+            weeklyView.smoothScrollToPosition(targetPos);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -277,73 +285,121 @@ public class CalendarioActivity extends AppCompatActivity {
     }
 
     private void populateWeeklyView() {
-        weeklyContainer.removeAllViews();
-        try {
-            SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-            Date date = dbFormat.parse(selectedDate);
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
-            cal.add(Calendar.DAY_OF_MONTH, -1); // Start from yesterday
+        if (weeklyView.getAdapter() == null) {
+            weeklyView.setAdapter(new WeeklyAdapter());
+        }
+        WeeklyAdapter adapter = (WeeklyAdapter) weeklyView.getAdapter();
+        weeklyView.scrollToPosition(adapter.getPositionForDate(selectedDate));
+    }
 
-            SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE d MMMM", Locale.ITALIAN);
+    private class WeeklyAdapter extends RecyclerView.Adapter<WeeklyAdapter.ViewHolder> {
+        private final Calendar baseCalendar;
+        private final SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        private final SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE d MMMM", Locale.ITALIAN);
+        private static final int CENTER_POSITION = 500000;
 
-            for (int i = 0; i < 5; i++) {
-                final String dateStr = dbFormat.format(cal.getTime());
-                View card = getLayoutInflater().inflate(R.layout.item_weekly_day, weeklyContainer, false);
+        public WeeklyAdapter() {
+            baseCalendar = Calendar.getInstance();
+        }
 
-                TextView dateTV = card.findViewById(R.id.weeklyDateTV);
-                TextView summaryTV = card.findViewById(R.id.weeklySummaryTV);
-                CardView cardView = card.findViewById(R.id.weeklyDayCard);
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_weekly_day, parent, false);
+            return new ViewHolder(view);
+        }
 
-                String formattedDate = dayFormat.format(cal.getTime());
-                formattedDate = formattedDate.substring(0, 1).toUpperCase() + formattedDate.substring(1);
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            Calendar cal = (Calendar) baseCalendar.clone();
+            cal.add(Calendar.DAY_OF_YEAR, position - CENTER_POSITION);
 
-                // Set height based on day
-                ViewGroup.LayoutParams params = cardView.getLayoutParams();
-                if (i == 1) { // Oggi
-                    params.height = (int) (180 * getResources().getDisplayMetrics().density);
-                    dateTV.setText(formattedDate + " (Oggi)");
-                } else if (i == 0) { // Ieri
-                    params.height = (int) (100 * getResources().getDisplayMetrics().density);
-                    dateTV.setText(formattedDate);
-                } else { // Altri
-                    params.height = (int) (130 * getResources().getDisplayMetrics().density);
-                    dateTV.setText(formattedDate);
-                }
-                cardView.setLayoutParams(params);
+            String dateStr = dbFormat.format(cal.getTime());
+            String formattedDate = dayFormat.format(cal.getTime());
+            formattedDate = formattedDate.substring(0, 1).toUpperCase() + formattedDate.substring(1);
 
-                // Summary
-                PianoPasto piano = dbHelper.getPianoPastoByDate(dateStr);
-                if (piano != null) {
-                    StringBuilder sb = new StringBuilder();
-                    appendDish(sb, piano.getPranzoPrimo());
-                    appendDish(sb, piano.getPranzoSecondo());
-                    appendDish(sb, piano.getPranzoContorno());
-                    appendDish(sb, piano.getPranzoPiattoUnico());
-                    appendDish(sb, piano.getCenaPrimo());
-                    appendDish(sb, piano.getCenaSecondo());
-                    appendDish(sb, piano.getCenaContorno());
-                    appendDish(sb, piano.getCenaPiattoUnico());
+            Calendar today = Calendar.getInstance();
+            boolean isToday = cal.get(Calendar.YEAR) == today.get(Calendar.YEAR) &&
+                             cal.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR);
 
-                    String summary = sb.toString().trim();
-                    if (summary.endsWith(",")) summary = summary.substring(0, summary.length() - 1);
-                    summaryTV.setText(summary.isEmpty() ? "Pasti non impostati" : summary);
-                } else {
-                    summaryTV.setText("Pasti non impostati");
-                }
+            holder.dateTV.setText(isToday ? formattedDate + " (Oggi)" : formattedDate);
 
-                card.setOnClickListener(v -> {
-                    selectedDate = dateStr;
-                    currentMode = ViewMode.DAILY;
-                    viewSwitchBtn.setImageResource(R.drawable.ic_view_day);
-                    showDailyView();
-                });
-
-                weeklyContainer.addView(card);
-                cal.add(Calendar.DAY_OF_MONTH, 1);
+            ViewGroup.LayoutParams params = holder.cardView.getLayoutParams();
+            if (isToday) {
+                params.height = (int) (180 * getResources().getDisplayMetrics().density);
+            } else {
+                params.height = (int) (130 * getResources().getDisplayMetrics().density);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+            holder.cardView.setLayoutParams(params);
+
+            PianoPasto piano = dbHelper.getPianoPastoByDate(dateStr);
+            if (piano != null) {
+                StringBuilder sb = new StringBuilder();
+                appendDish(sb, piano.getPranzoPrimo());
+                appendDish(sb, piano.getPranzoSecondo());
+                appendDish(sb, piano.getPranzoContorno());
+                appendDish(sb, piano.getPranzoPiattoUnico());
+                appendDish(sb, piano.getCenaPrimo());
+                appendDish(sb, piano.getCenaSecondo());
+                appendDish(sb, piano.getCenaContorno());
+                appendDish(sb, piano.getCenaPiattoUnico());
+
+                String summary = sb.toString().trim();
+                if (summary.endsWith(",")) summary = summary.substring(0, summary.length() - 1);
+                holder.summaryTV.setText(summary.isEmpty() ? "Pasti non impostati" : summary);
+            } else {
+                holder.summaryTV.setText("Pasti non impostati");
+            }
+
+            holder.itemView.setOnClickListener(v -> {
+                selectedDate = dateStr;
+                currentMode = ViewMode.DAILY;
+                viewSwitchBtn.setImageResource(R.drawable.ic_view_day);
+                showDailyView();
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return CENTER_POSITION * 2;
+        }
+
+        public int getPositionForDate(String dateStr) {
+            try {
+                SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+                Date targetDate = parser.parse(dateStr);
+                
+                Calendar base = Calendar.getInstance();
+                base.setTime(baseCalendar.getTime());
+                base.set(Calendar.HOUR_OF_DAY, 0);
+                base.set(Calendar.MINUTE, 0);
+                base.set(Calendar.SECOND, 0);
+                base.set(Calendar.MILLISECOND, 0);
+
+                Calendar target = Calendar.getInstance();
+                target.setTime(targetDate);
+                target.set(Calendar.HOUR_OF_DAY, 0);
+                target.set(Calendar.MINUTE, 0);
+                target.set(Calendar.SECOND, 0);
+                target.set(Calendar.MILLISECOND, 0);
+
+                long diff = target.getTimeInMillis() - base.getTimeInMillis();
+                int days = (int) Math.round(diff / (24.0 * 60 * 60 * 1000));
+                return CENTER_POSITION + days;
+            } catch (Exception e) {
+                return CENTER_POSITION;
+            }
+        }
+
+        class ViewHolder extends RecyclerView.ViewHolder {
+            TextView dateTV, summaryTV;
+            CardView cardView;
+
+            ViewHolder(View view) {
+                super(view);
+                dateTV = view.findViewById(R.id.weeklyDateTV);
+                summaryTV = view.findViewById(R.id.weeklySummaryTV);
+                cardView = view.findViewById(R.id.weeklyDayCard);
+            }
         }
     }
 

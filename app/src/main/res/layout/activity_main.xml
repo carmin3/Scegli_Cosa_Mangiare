@@ -13,17 +13,6 @@
         android:layout_height="wrap_content"
         android:padding="8dp">
 
-        <ImageButton
-            android:id="@+id/settingsBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:background="@null"
-            android:contentDescription="@string/settings_description"
-            android:src="@android:drawable/ic_menu_preferences"
-            app:tint="@color/Verde_scuro" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -52,7 +41,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintHeight_percent="0.4">
+            app:layout_constraintHeight_percent="0.44">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -152,10 +141,26 @@
             app:layout_constraintVertical_bias="0.7" />
 
         <ImageButton
+            android:id="@+id/settingsBtn"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@color/Verde_BG"
+            android:contentDescription="@string/settings_description"
+            android:scaleX="2"
+            android:scaleY="2"
+            android:src="@drawable/ic_settings"
+            app:tint="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ListaBtn"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ProponiPiattoBtn"
+            app:layout_constraintVertical_bias="0.2" />
+
+        <ImageButton
             android:id="@+id/ListaBtn"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:layout_marginTop="29dp"
             android:background="@color/Verde_BG"
             android:contentDescription="@string/lista_piatti_description"
             android:scaleX="2"
@@ -163,7 +168,7 @@
             android:src="@drawable/list_icon"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/settingsBtn"
             app:layout_constraintTop_toBottomOf="@+id/ProponiPiattoBtn"
             app:layout_constraintVertical_bias="0.2"
             app:tint="@color/black" />

@@ -12,6 +12,8 @@ import java.util.List;
 
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import androidx.cardview.widget.CardView;
 
@@ -116,14 +118,17 @@ public class MainActivity extends AppCompatActivity {
             public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
                 if (e1 == null || e2 == null) return false;
                 if (Math.abs(e1.getX() - e2.getX()) > 100 && Math.abs(velocityX) > 100) {
-                    if (e1.getX() > e2.getX()) {
-                        // Swipe left -> Next day
-                        currentCalendarDate.add(Calendar.DAY_OF_YEAR, 1);
-                    } else {
-                        // Swipe right -> Previous day
-                        currentCalendarDate.add(Calendar.DAY_OF_YEAR, -1);
-                    }
-                    updateCalendarDisplay();
+                    final boolean forward = e1.getX() > e2.getX();
+                    animateViewChange(view, forward, () -> {
+                        if (forward) {
+                            // Swipe left -> Next day
+                            currentCalendarDate.add(Calendar.DAY_OF_YEAR, 1);
+                        } else {
+                            // Swipe right -> Previous day
+                            currentCalendarDate.add(Calendar.DAY_OF_YEAR, -1);
+                        }
+                        updateCalendarDisplay();
+                    });
                     return true;
                 }
                 return false;
@@ -140,5 +145,22 @@ public class MainActivity extends AppCompatActivity {
             gestureDetector.onTouchEvent(event);
             return true;
         });
+    }
+
+    private void animateViewChange(final android.view.View view, final boolean forward, final Runnable updateAction) {
+        int outAnim = forward ? R.anim.slide_out_left : R.anim.slide_out_right;
+        final int inAnim = forward ? R.anim.slide_in_right : R.anim.slide_in_left;
+
+        Animation out = AnimationUtils.loadAnimation(this, outAnim);
+        out.setAnimationListener(new Animation.AnimationListener() {
+            @Override public void onAnimationStart(Animation animation) {}
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                updateAction.run();
+                view.startAnimation(AnimationUtils.loadAnimation(MainActivity.this, inAnim));
+            }
+            @Override public void onAnimationRepeat(Animation animation) {}
+        });
+        view.startAnimation(out);
     }
 }
