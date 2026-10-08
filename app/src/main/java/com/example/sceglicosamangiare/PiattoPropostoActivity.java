@@ -17,10 +17,12 @@ import java.util.Random;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageButton;
+import android.widget.CheckBox;
 
 public class PiattoPropostoActivity extends AppCompatActivity {
 
     private PiattoRepository repo;
+    private WeightManager weightManager;
     private String proteinaScelta;
     private Spinner proteinaSpinner;
     private final List<String> opzioniProteina = Arrays.asList("Dieta Bilanciata", "Carne Bianca", "Carne Rossa", "Pesce", "Vegetariano");
@@ -36,8 +38,10 @@ public class PiattoPropostoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_piatto_proposto);
 
         repo = new PiattoRepository(PiattoPropostoActivity.this);
+        weightManager = new WeightManager(this);
 
         setupSpinner();
+        setupCheckBox();
         
         // Primo avvio: scelta casuale completa
         sceltaCasualeProteina();
@@ -46,6 +50,25 @@ public class PiattoPropostoActivity extends AppCompatActivity {
 
         backHomeActivity();
         setupButtons();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        CheckBox soloPreferitiCheckBox = findViewById(R.id.soloPreferitiCheckBox);
+        if (soloPreferitiCheckBox != null) {
+            soloPreferitiCheckBox.setChecked(weightManager.isSoloPreferiti());
+        }
+    }
+
+    private void setupCheckBox() {
+        CheckBox soloPreferitiCheckBox = findViewById(R.id.soloPreferitiCheckBox);
+        if (soloPreferitiCheckBox != null) {
+            soloPreferitiCheckBox.setChecked(weightManager.isSoloPreferiti());
+            soloPreferitiCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                weightManager.setSoloPreferiti(isChecked);
+            });
+        }
     }
 
     private void setupSpinner() {
@@ -65,6 +88,11 @@ public class PiattoPropostoActivity extends AppCompatActivity {
                 proteinaScelta = selected;
             }
             refreshAllDishes(proteinaScelta);
+            
+            CheckBox soloPreferitiCheckBox = findViewById(R.id.soloPreferitiCheckBox);
+            if (soloPreferitiCheckBox != null) {
+                soloPreferitiCheckBox.setChecked(weightManager.isSoloPreferiti());
+            }
             
             // Dopo il clic, lo spinner torna a "Dieta Bilanciata"
             proteinaSpinner.setSelection(0);

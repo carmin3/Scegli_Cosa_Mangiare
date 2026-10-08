@@ -14,6 +14,7 @@ public class WeightManager {
     public static final String KEY_PESCE = "Pesce";
     public static final String KEY_VEG = "Vegetariano";
     public static final String KEY_NEUTRO = "Neutro";
+    public static final String KEY_SOLO_PREFERITI = "solo_preferiti";
 
     // Valori di default basati sull'app attuale
     private static final float DEFAULT_ROSSA = 5.0f;
@@ -59,5 +60,13 @@ public class WeightManager {
             case KEY_NEUTRO: return prefs.getFloat(KEY_NEUTRO, DEFAULT_NEUTRO);
             default: return 0f;
         }
+    }
+
+    public boolean isSoloPreferiti() {
+        return prefs.getBoolean(KEY_SOLO_PREFERITI, false);
+    }
+
+    public void setSoloPreferiti(boolean soloPreferiti) {
+        prefs.edit().putBoolean(KEY_SOLO_PREFERITI, soloPreferiti).apply();
     }
 }
