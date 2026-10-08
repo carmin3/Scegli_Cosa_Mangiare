@@ -23,7 +23,7 @@ public class PiattoPropostoActivity extends AppCompatActivity {
     private PiattoRepository repo;
     private String proteinaScelta;
     private Spinner proteinaSpinner;
-    private final List<String> opzioniProteina = Arrays.asList("Dieta Bilanciata", "Carne Bianca", "Pesce", "Carne Rossa", "Proteine Vegetali", "Neutro");
+    private final List<String> opzioniProteina = Arrays.asList("Dieta Bilanciata", "Carne Bianca", "Carne Rossa", "Pesce", "Vegetariano");
 
     private Piatto currentPrimo;
     private Piatto currentSecondo;
@@ -102,10 +102,8 @@ public class PiattoPropostoActivity extends AppCompatActivity {
     private void refreshAllDishes(String proteina) {
         TextView infoTv = findViewById(R.id.infoNutrienteTV);
         if (infoTv != null) {
-            if (proteina.equalsIgnoreCase("Proteine Vegetali")) {
-                infoTv.setText("Il menù è a base di proteine vegetali");
-            } else if (proteina.equalsIgnoreCase("Neutro")) {
-                infoTv.setText("Il menù è neutro");
+            if (proteina.equalsIgnoreCase("Vegetariano")) {
+                infoTv.setText("Il menù è vegetariano");
             } else {
                 infoTv.setText("Il menù è a base di " + proteina.toLowerCase());
             }
@@ -127,8 +125,7 @@ public class PiattoPropostoActivity extends AppCompatActivity {
         itemDrops.addEntry("Carne Rossa", weightManager.getWeight(WeightManager.KEY_CARNE_ROSSA));
         itemDrops.addEntry("Carne Bianca", weightManager.getWeight(WeightManager.KEY_CARNE_BIANCA));
         itemDrops.addEntry("Pesce", weightManager.getWeight(WeightManager.KEY_PESCE));
-        itemDrops.addEntry("Proteine Vegetali", weightManager.getWeight(WeightManager.KEY_VEG));
-        itemDrops.addEntry("Neutro", weightManager.getWeight(WeightManager.KEY_NEUTRO));
+        itemDrops.addEntry("Vegetariano", weightManager.getWeight(WeightManager.KEY_VEG));
         proteinaScelta = itemDrops.getProteina();
     }
 

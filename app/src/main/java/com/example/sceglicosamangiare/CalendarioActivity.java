@@ -65,7 +65,7 @@ public class CalendarioActivity extends AppCompatActivity {
     private ImageButton btnActionCPrimo, btnActionCSecondo, btnActionCContorno, btnActionCPiattoUnico;
     private TextView editDateTV;
     private ListPopupWindow popupWindow;
-    private String[] proteine = {"Dieta Bilanciata", "Carne Rossa", "Carne Bianca", "Pesce", "Proteine Vegetali", "Neutro"};
+    private String[] proteine = {"Dieta Bilanciata", "Carne Rossa", "Carne Bianca", "Pesce", "Vegetariano", "Neutro"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -654,7 +654,7 @@ public class CalendarioActivity extends AppCompatActivity {
         itemDrops.addEntry("Carne Rossa", weightManager.getWeight(WeightManager.KEY_CARNE_ROSSA));
         itemDrops.addEntry("Carne Bianca", weightManager.getWeight(WeightManager.KEY_CARNE_BIANCA));
         itemDrops.addEntry("Pesce", weightManager.getWeight(WeightManager.KEY_PESCE));
-        itemDrops.addEntry("Proteine Vegetali", weightManager.getWeight(WeightManager.KEY_VEG));
+        itemDrops.addEntry("Vegetariano", weightManager.getWeight(WeightManager.KEY_VEG));
         itemDrops.addEntry("Neutro", weightManager.getWeight(WeightManager.KEY_NEUTRO));
         
         return itemDrops.getProteina();

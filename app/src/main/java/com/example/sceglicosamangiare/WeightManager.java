@@ -12,7 +12,7 @@ public class WeightManager {
     public static final String KEY_CARNE_ROSSA = "Carne Rossa";
     public static final String KEY_CARNE_BIANCA = "Carne Bianca";
     public static final String KEY_PESCE = "Pesce";
-    public static final String KEY_VEG = "Proteine Vegetali";
+    public static final String KEY_VEG = "Vegetariano";
     public static final String KEY_NEUTRO = "Neutro";
 
     // Valori di default basati sull'app attuale

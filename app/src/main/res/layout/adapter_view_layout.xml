@@ -1,70 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="8dp"
-    android:descendantFocusability="blocksDescendants">
+    android:background="@color/Verde_BG">
 
-    <ImageView
-        android:id="@+id/favoriteStar"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_gravity="center_vertical"
-        android:contentDescription="favorite"
-        android:src="@android:drawable/btn_star_big_off"
-        android:visibility="gone"
-        android:paddingEnd="8dp"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:clickable="false" />
-
+    <!-- Background view revealed during swipe: Yellow bar with "Preferito" on the right -->
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:id="@+id/swipeBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/Giallo"
+        android:gravity="end|center_vertical"
+        android:orientation="horizontal"
+        android:paddingEnd="24dp"
+        android:visibility="invisible">
 
         <TextView
-            android:id="@+id/nomePiattoTV"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="start|center_vertical"
-            android:paddingLeft="2dp"
-            android:text="nomePiattoTV"
-            android:textAlignment="textStart"
-            android:textSize="20sp"
+            android:text="Preferito"
+            android:textColor="@color/black"
             android:textStyle="bold"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:clickable="false" />
-
-        <TextView
-            android:id="@+id/ingredientiPiattoTV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="start|center_vertical"
-            android:paddingLeft="2dp"
-            android:text="ingredientiPiattoTV"
-            android:textAlignment="textStart"
-            android:textSize="12sp"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:clickable="false" />
+            android:textSize="16sp" />
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tipoPiattoTV"
-        android:layout_width="wrap_content"
+    <!-- Foreground item view that translates during swipe -->
+    <LinearLayout
+        android:id="@+id/swipeForeground"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical|end"
-        android:paddingRight="10dp"
-        android:text="tipoPiattoTV"
-        android:textAlignment="textEnd"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:clickable="false" />
+        android:background="@color/Verde_BG"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:gravity="center_vertical"
+        android:descendantFocusability="blocksDescendants">
 
-</LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/nomePiattoTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center_vertical"
+                android:paddingLeft="2dp"
+                android:text="nomePiattoTV"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/ingredientiPiattoTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center_vertical"
+                android:paddingLeft="2dp"
+                android:text="ingredientiPiattoTV"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tipoPiattoTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|end"
+            android:paddingRight="10dp"
+            android:text="tipoPiattoTV"
+            android:textAlignment="textEnd" />
+
+        <ImageView
+            android:id="@+id/favoriteStar"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
+            android:contentDescription="favorite"
+            android:src="@drawable/ic_star_filled"
+            android:visibility="gone"
+            android:paddingStart="4dp" />
+
+    </LinearLayout>
+
+</FrameLayout>

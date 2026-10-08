@@ -63,87 +63,44 @@
         android:id="@+id/filtriPiattoLL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="8dp">
 
         <Space
             android:layout_width="match_parent"
             android:layout_height="5dp" />
 
-        <LinearLayout
+        <Spinner
+            android:id="@+id/filterSpinnerPortata"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_margin="4dp" />
 
-            <Button
-                android:id="@+id/tuttiFilter"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:onClick="tuttiFilterTapped"
-                android:text="Tutti" />
-
-            <Button
-                android:id="@+id/primiFilter"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:onClick="primiFilterTapped"
-                android:text="Primi" />
-
-            <Button
-                android:id="@+id/secondiFilter"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:onClick="secondiFilterTapped"
-                android:text="Secondi" />
-
-        </LinearLayout>
-
-        <LinearLayout
+        <Spinner
+            android:id="@+id/filterSpinnerBase"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_margin="4dp" />
 
-            <Button
-                android:id="@+id/contorniFilter"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:onClick="contorniFilterTapped"
-                android:text="Contorni" />
-
-            <Button
-                android:id="@+id/rectangleFilter"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:onClick="piattiuniciFilterTapped"
-                android:text="Piatti unici" />
-
-            <Button
-                android:id="@+id/circleFilter"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:onClick="personaliFilterTapped"
-                android:text="Personali" />
-
-        </LinearLayout>
-
-        <!-- Pulsante spostato qui dentro -->
-        <Button
-            android:id="@+id/aggiuntapiattoactivityBtn"
+        <Spinner
+            android:id="@+id/filterSpinnerNutrienti"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="Aggiungi un piatto" />
+            android:layout_margin="4dp" />
+
+        <Spinner
+            android:id="@+id/filterSpinnerGusto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp" />
+
+        <CheckBox
+            android:id="@+id/filterCheckBoxPreferiti"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:text="Preferiti"
+            android:textColor="@color/black" />
 
     </LinearLayout>
     <!-- Fine sezione filtri -->
@@ -163,5 +120,12 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
+
+    <Button
+        android:id="@+id/aggiuntapiattoactivityBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="Aggiungi un piatto" />
 
 </LinearLayout>

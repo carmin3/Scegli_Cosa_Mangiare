@@ -10,24 +10,24 @@
         <item>Piatto Unico</item>
     </string-array>
     <string-array name="chenutrienti">
-        <item>Che nutrienti contiene?</item>
-        <item>Carne Rossa</item>
+        <item>Base del Piatto</item>
         <item>Carne Bianca</item>
+        <item>Carne Rossa</item>
         <item>Pesce</item>
         <item>Vegetariano</item>
     </string-array>
     <string-array name="chedominanza">
-        <item>Che dominanza nutrizionale ha?</item>
-        <item>Carbo-Puro</item>
+        <item>Nutrienti</item>
+        <item>Carboidrati</item>
         <item>Carbo-Proteico</item>
-        <item>Proteina-Pura</item>
-        <item>Fibre/Grassi</item>
+        <item>Proteico</item>
+        <item>Fibre e vitamine</item>
     </string-array>
     <string-array name="chegusto">
-        <item>Che profilo gustativo ha?</item>
-        <item>Terra-Forte</item>
-        <item>Mare</item>
-        <item>Neutro/Orto</item>
+        <item>Gusto</item>
+        <item>Di Terra</item>
+        <item>Di Mare</item>
+        <item>Vegetale</item>
     </string-array>
 
     <string name="backup_ripristino">Backup e Ripristino ricette</string>

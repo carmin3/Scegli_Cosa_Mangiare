@@ -208,8 +208,8 @@ public class PiattoRepository {
         ArrayList<Piatto> filtrati = new ArrayList<>();
         String dominanzaCercata = "";
         if (vincolo.getDominanzaNutrizionale() != null) {
-            if (vincolo.getDominanzaNutrizionale().equalsIgnoreCase("Carbo-Puro")) dominanzaCercata = "Proteina-Pura";
-            else if (vincolo.getDominanzaNutrizionale().equalsIgnoreCase("Proteina-Pura")) dominanzaCercata = "Carbo-Puro";
+            if (vincolo.getDominanzaNutrizionale().equalsIgnoreCase("Carboidrati")) dominanzaCercata = "Proteico";
+            else if (vincolo.getDominanzaNutrizionale().equalsIgnoreCase("Proteico")) dominanzaCercata = "Carboidrati";
         }
 
         for (Piatto p : all) {
@@ -241,8 +241,8 @@ public class PiattoRepository {
 
     private boolean isGustoIncompatibile(String g1, String g2) {
         if (g1 == null || g2 == null || g1.isEmpty() || g2.isEmpty()) return false;
-        if ((g1.equalsIgnoreCase("Terra-Forte") && g2.equalsIgnoreCase("Mare")) ||
-                (g1.equalsIgnoreCase("Mare") && g2.equalsIgnoreCase("Terra-Forte"))) {
+        if ((g1.equalsIgnoreCase("Di Terra") && g2.equalsIgnoreCase("Di Mare")) ||
+                (g1.equalsIgnoreCase("Di Mare") && g2.equalsIgnoreCase("Di Terra"))) {
             return true;
         }
         return false;
