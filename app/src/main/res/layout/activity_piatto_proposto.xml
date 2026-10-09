@@ -57,6 +57,17 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <TextView
+                android:id="@+id/infoNutrienteTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:gravity="center"
+                android:text="Il menù è a base di..."
+                android:textColor="@color/Verde_scuro"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
             <!-- Primo -->
             <TextView
                 android:layout_width="match_parent"
@@ -224,16 +235,7 @@
                     app:tint="@color/Verde_scuro" />
             </RelativeLayout>
 
-            <TextView
-                android:id="@+id/infoNutrienteTV"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:gravity="center"
-                android:text="Il menù è a base di..."
-                android:textColor="@color/Verde_scuro"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+
 
             <!-- Sezione Scelta Ingrediente -->
             <TextView
